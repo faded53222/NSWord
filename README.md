@@ -5,7 +5,9 @@ NSWord dataprep requires eventalign.txt from ``nanopolish eventalign``:
 ```
     nanopolish eventalign --reads reads.fastq --bam reads.sorted.bam --genome transcript.fa --scale-events --signal-index --summary /path/to/summary.txt  --threads 50 > /path/to/eventalign.txt
 ```
-This function segments raw fast5 signals to each position within the transcriptome, allowing m6Anet to predict modification based on the segmented signals. In order to run eventalign, users will need:
+This function segments raw fast5 signals to each position within the transcriptome, allowing for predictions of modifications based on the segmented signals. In order to run eventalign, users will need:
 * ``reads.fastq``: fastq file generated from basecalling the raw .fast5 files
 * ``reads.sorted.bam``: sorted bam file obtained from aligning reads.fastq to the reference transcriptome file
 * ``transcript.fa``: reference transcriptome file
+
+See [Nanopolish](https://github.com/jts/nanopolish) for more information.
