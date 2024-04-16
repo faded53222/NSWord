@@ -17,3 +17,6 @@ After getting nanopolish eventalign results, we need to preprocess the segmented
 ``make_index.py`` builds index for faster running. ``process.py`` gets positive samples for the dataset. And ``process_neg.py`` gets negative samples for the dataset.
 
 Main functions are within those files, take care with '####' annotations before running them.
+
+RNA modification sites such as those in ``m6Asites.txt`` need to be converted to ENST coordinates with ``ENSG_to_ENST.ipynb`` to be used for searching positive samples in ``process.py``.
+
