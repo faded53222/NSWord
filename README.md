@@ -29,7 +29,7 @@ Run specific blocks in ``Draw_Graphs.ipynb`` to get the gragh you need.
 
 ``m5C_*.ipynb`` is for detecting m5C RNA modification.
 
-You can also get the result of [m6Anet](https://github.com/GoekeLab/m6anet/tree/master) for predicting the same dataset by running ``m6Anet.ipynb``
+You can also get the result of [m6Anet](https://github.com/GoekeLab/m6anet/tree/master) model for predicting the same dataset by running ``m6Anet.ipynb``
 
 # Citing
 If you use NSWord in your research, please cite ####
