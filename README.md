@@ -13,5 +13,7 @@ This function segments raw fast5 signals to each position within the transcripto
 See [Nanopolish](https://github.com/jts/nanopolish) for more information.
 
 After getting nanopolish eventalign results, we need to preprocess the segmented raw signal file using ``make_index.py``, ``process.py`` and ``process_neg.py``.
+
 ``make_index.py`` builds index for faster running. ``process.py`` gets positive samples for the dataset. And ``process_neg.py`` gets negative samples for the dataset.
+
 Main functions are within those files, take care with '####' annotations before running them.
