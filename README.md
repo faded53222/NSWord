@@ -1,1 +1,3 @@
 # NSWord
+
+# Installation
