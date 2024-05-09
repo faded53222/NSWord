@@ -53,7 +53,7 @@ def parallel_make_index(file,chunk_size,n_processes):
     chunk_split.loc[:,'line_length']=np.array(last_split_lines)
     task_queue.put((chunk_split[index_features],file_pos_start,index_path))
 
-    task_queue=end_queue(task_queue,n_processes)
+    task_queue=parallels.end_queue(task_queue,n_processes)
     task_queue.join()
 
 if __name__ == '__main__':
