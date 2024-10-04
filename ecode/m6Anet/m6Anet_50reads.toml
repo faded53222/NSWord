@@ -2,7 +2,7 @@ model = "prod_sigmoid_pooling"
 
 [[block]]
 block_type = "KmerMultipleEmbedding"
-input_channel = 65
+input_channel = 96
 output_channel = 2
 num_neighboring_features = 1
 
