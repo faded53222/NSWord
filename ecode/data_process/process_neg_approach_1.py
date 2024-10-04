@@ -285,7 +285,7 @@ def parallel_process(file,restrict_file,n_processes_0,n_processes_1,n_processes_
 if __name__ == '__main__':
 	for nano_file in ['../events/SGNex_Hct116_directRNA_replicate3_run4.eventalign','../events/SGNex_Hct116_directRNA_replicate4_run3.eventalign','../events/SGNex_Hct116_directRNA_replicate3_run1.eventalign']:
 		print('begin the processing of',nano_file.split('/')[-1])
-		restrict_file='./Hct116_ENST'
+		restrict_file='./others_reduced_by_Hct116_ENST'
 		parallel_process(nano_file,restrict_file,N_processes_0,N_processes_1,N_processes_2)
 		print('end the processing of',nano_file.split('/')[-1])
 
