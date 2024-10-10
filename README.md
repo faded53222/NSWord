@@ -10,6 +10,19 @@
     cd NSWord
     ```
 
+2. **Create a virtual environment** (optional but recommended):
+
+    ```bash
+    python -m venv virtual
+    source virtual/bin/activate  # On Windows use `virtual\Scripts\activate`
+    ```
+
+3. **Install dependencies**:
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
 ## Dataprep
 NSWord dataprep requires eventalign.txt from ``nanopolish eventalign``:
 ```
