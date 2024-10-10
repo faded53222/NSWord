@@ -45,7 +45,7 @@ Main functions are within those files, take care with '####' annotations before 
 
 RNA modification sites such as those in ``m6Asites.txt`` need to be converted to ENST coordinates with ``ENSG_to_ENST.ipynb`` to be used for searching positive samples in ``process.py``.
 
-# Running
+## Usage
 
 We offer two ways to run the project:
 1. **Jupyter Notebook Version**: This version allows users to run and interact with code blocks step by step.
