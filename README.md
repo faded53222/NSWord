@@ -3,7 +3,14 @@
 
 ## Installation
 
-# Dataprep
+1. **Clone the repository**:
+
+    ```bash
+    git clone https://github.com/faded53222/NSWord.git
+    cd NSWord
+    ```
+
+## Dataprep
 NSWord dataprep requires eventalign.txt from ``nanopolish eventalign``:
 ```
     nanopolish eventalign --reads reads.fastq --bam reads.sorted.bam --genome transcript.fa --scale-events --signal-index --summary /path/to/summary.txt  --threads 50 > /path/to/eventalign.txt
