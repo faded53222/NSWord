@@ -46,13 +46,19 @@ Main functions are within those files, take care with '####' annotations before 
 RNA modification sites such as those in ``m6Asites.txt`` need to be converted to ENST coordinates with ``ENSG_to_ENST.ipynb`` to be used for searching positive samples in ``process.py``.
 
 # Running
+
+We offer two ways to run the project:
+1. **Jupyter Notebook Version**: This version allows users to run and interact with code blocks step by step.
+2. **Command-line Python Version**: A step-by-step Python script that can be executed directly from the command line.
+
+1. Using the Jupyter Notebook Version
+
+
 Run ``NSWord.ipynb`` block by block to train and test some conventional NSWord models. 
 
 Run specific blocks in ``Draw_Graphs.ipynb`` to get the gragh you need.
 
 ``NSWord_extra.ipynb`` is for investigating "the impact of limiting the length or number of signal reads" and exploring "the role of transcript sequence in modification prediction".
-
-``m5C_*.ipynb`` is for detecting m5C RNA modification.
 
 You can also get the result of [m6Anet](https://github.com/GoekeLab/m6anet/tree/master) model for predicting the same dataset by running ``m6Anet.ipynb``
 
