@@ -275,7 +275,7 @@ def parallel_process(file,restrict_file,n_processes_0,n_processes_1,n_processes_
 
 
 if __name__ == '__main__':
-	parser=argparse.ArgumentParser(description="Get desired information of the same motif of input file from nanopolish events, number not limited")
+	parser=argparse.ArgumentParser(description="Get desired information from nanopolish events")
 	parser.add_argument('-i','--input',required=True,help="Input file path")
 	parser.add_argument('-r','--restrict_file',required=True,help="ENST motifs to get from the input file")
 

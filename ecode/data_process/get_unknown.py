@@ -318,7 +318,7 @@ def parallel_process_unknown(file,restrict_file_name,n_processes_0,n_processes_1
 		task_queue_2.put(None)
 
 if __name__ == '__main__':
-	parser=argparse.ArgumentParser(description="Get desired information of the same motif of input file from nanopolish events, number not limited")
+	parser=argparse.ArgumentParser(description="Get desired information of the same motifs of input file from nanopolish events, number not limited")
 	parser.add_argument('-i','--input',required=True,help="Input file path")
 	parser.add_argument('-r','--restrict_file',required=True,help="ENST motifs to get from the input file")
 
