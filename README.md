@@ -63,9 +63,17 @@ nanopolish eventalign \
 
 After getting nanopolish eventalign results, we need to preprocess the segmented raw signal file using ``make_index.py``, ``process.py``, ``process_neg_approach1.py`` and ``process_neg_approach2.py``.
 
-The restriction file, which contains the loci to be extracted from the events results, is obtained in ``process_sites.ipynb``.
+The restriction files, which contain the sites to be extracted from the events results, are obtained in ``process_sites.ipynb``.
 
 ``make_index.py`` builds index for faster running. ``process.py`` gets positive samples for the dataset. ``process_neg_approach1.py`` gets half of the negative samples with the same 5-mer motifs as positive ones. And ``process_neg_approach2.py`` gets the other half of the negative samples by selecting sites that are m6A modifiable in other cell-lines but not in Hct116.
+
+Example:
+```bash
+python make_index.py --input SGNex_Hct116_directRNA_replicate3_run4.eventalign
+python process.py -i SGNex_Hct116_directRNA_replicate3_run4.eventalign --restrict_file Hct116_ENST
+python process_neg_appoarch1.py -i SGNex_Hct116_directRNA_replicate3_run4.eventalign -r Hct116_ENST
+python process_neg_appoarch2.py -i SGNex_Hct116_directRNA_replicate3_run4.eventalign -r others_reduced_by_Hct116_ENST
+```
 
 ## Usage
 
