@@ -1,7 +1,7 @@
+import argparse
 import multiprocessing
 import pandas as pd
 import numpy as np
-import argparse
 
 import parallels
 
@@ -57,7 +57,7 @@ if __name__ == "__main__":
 	parser=argparse.ArgumentParser(description="Make index for nanopolish events")
 	parser.add_argument('-i','--input',required=True,help="Input file path")
 	parser.add_argument('-c','--chunk_size',default=1000000,help="The size of each chunk processed in parallel")
-	parser.add_argument('-n','--n_processes',default=10,help="Number of processes for processing")
+	parser.add_argument('-n','--n_processes',default=10,help="The number of processes for processing")
 
 	args=parser.parse_args()
 

@@ -1,3 +1,4 @@
+import argparse
 import os
 import json
 import time
@@ -10,15 +11,6 @@ from itertools import groupby
 from operator import itemgetter
 
 import parallels
-
-N_processes_0=3
-N_processes_1=6
-N_processes_2=12
-SIDE_WINDOW_SIZE=12
-MIN_COVER_RATE=0.8
-REPEAT_SIZE_MIN=20
-REPEAT_SIZE_MAX=50
-
 
 def parallel_seq_search(read_info,read_index,search_seqs,child_conn,locks):
 	searched_pos=[]
@@ -222,7 +214,7 @@ def parallel_main(file,o_file,gene,gene_readindex_rows,search_info,task_queue_1,
 			task_queue_2.put((read_info,read_index,select_info,child_conn_2))
 	receiver_2.join()
 
-def parallel_process(file,restrict_file,n_processes_0,n_processes_1,n_processes_2):
+def parallel_process(file,restrict_file,n_processes_0,n_processes_1,n_processes_2):	
 	lock_0=dict()
 	for lock_type in ['read','write','pipe_1','pipe_2']:
 		lock_0[lock_type]=multiprocessing.Lock()
@@ -283,9 +275,31 @@ def parallel_process(file,restrict_file,n_processes_0,n_processes_1,n_processes_
 
 
 if __name__ == '__main__':
-	for nano_file in ['../events/SGNex_Hct116_directRNA_replicate3_run4.eventalign','../events/SGNex_Hct116_directRNA_replicate4_run3.eventalign','../events/SGNex_Hct116_directRNA_replicate3_run1.eventalign']:
-		print('begin the processing of',nano_file.split('/')[-1])
-		restrict_file='./Hct116_ENST'
-		parallel_process(nano_file,restrict_file,N_processes_0,N_processes_1,N_processes_2)
-		print('end the processing of',nano_file.split('/')[-1])
+	parser=argparse.ArgumentParser(description="Get desired information from nanopolish events")
+	parser.add_argument('-i','--input',required=True,help="Input file path")
+	parser.add_argument('-r','--restrict_file',required=True,help="ENST motifs to get from the input file")
+
+	parser.add_argument('-n0','--n_processes_0',default=3,help="The number of processes for processing task queue 0")
+	parser.add_argument('-n1','--n_processes_1',default=6,help="The number of processes for processing task queue 1")
+	parser.add_argument('-n2','--n_processes_2',default=12,help="The number of processes for processing task queue 2")
+
+	parser.add_argument('-s','--side_window_size',default=12,help="The number of neighbor sites to obtain for each side")
+	parser.add_argument('-cr','--min_cover_rate',default=0.8,help="The lowest rate of available sites for a segment to be qualified")
+	parser.add_argument('-ri','--repeat_size_min',default=20,help="The lowest number of reads for a segment to be qualified")
+	parser.add_argument('-ra','--repeat_size_max',default=50,help="The number of obtained reads")
+
+	args=parser.parse_args()
+
+	global SIDE_WINDOW_SIZE,MIN_COVER_RATE,REPEAT_SIZE_MIN,REPEAT_SIZE_MAX
+	SIDE_WINDOW_SIZE=args.side_window_size
+	MIN_COVER_RATE=args.min_cover_rate
+	REPEAT_SIZE_MIN=args.repeat_size_min
+	REPEAT_SIZE_MAX=args.repeat_size_max
+
+	print('begin the processing of',args.input.split('/')[-1])
+	parallel_process(args.input,args.restrict_file,args.n_processes_0,args.n_processes_1,args.n_processes_2)
+	print('end the processing of',args.input.split('/')[-1])
+
+	
+	
 

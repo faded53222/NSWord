@@ -9,7 +9,7 @@ from itertools import groupby
 
 import parallels
 
-def parallel_unknown_seq_search(read_info,search_seqs,avoid_poses,child_conn,locks):
+def parallel_neg_seq_search(read_info,search_seqs,avoid_poses,child_conn,locks):
 	searched_pos=[]
 	parallel_seq_search_dic={}
 	for seq in search_seqs:
@@ -30,7 +30,7 @@ def parallel_unknown_seq_search(read_info,search_seqs,avoid_poses,child_conn,loc
 	with locks['pipe_1']:
 		child_conn.send(parallel_seq_search_dic)
 
-def receive_unknown_seq_search(recv_num,search_seqs,r_child_conn,parent_conn):
+def receive_neg_seq_search(recv_num,search_seqs,r_child_conn,parent_conn):
 	seq_search_dic={}
 	for seq in search_seqs:
 		seq_search_dic[seq]={}
@@ -60,7 +60,7 @@ def receive_unknown_seq_search(recv_num,search_seqs,r_child_conn,parent_conn):
 	else:
 		r_child_conn.send(None)
 
-def parallel_unknown_get_partition(read_info,select_info,child_conn,locks):
+def parallel_neg_get_partition(read_info,select_info,child_conn,locks):
 	read_info=read_info[read_info['reference_kmer']==read_info['model_kmer']].copy()
 	read_info=read_info[(read_info['position']>=select_info[1]-SIDE_WINDOW_SIZE)&(read_info['position']<=select_info[1]+SIDE_WINDOW_SIZE)].copy()
 	if len(read_info.index)==0:
@@ -119,7 +119,7 @@ def parallel_unknown_get_partition(read_info,select_info,child_conn,locks):
 	with locks['pipe_2']:
 		child_conn.send((partition_str,partition_data))
 
-def receive_unknown_partition(recv_num,gene,r_child_conn,parent_conn):
+def receive_neg_partition(recv_num,gene,r_child_conn,parent_conn):
 	recv_list=[]
 	for i in range(recv_num):
 		while 1:
@@ -146,7 +146,7 @@ def receive_unknown_partition(recv_num,gene,r_child_conn,parent_conn):
 		combine_seq=''.join(combine_seq)
 		r_child_conn.send((combine_seq,[x[1] for x in recv_list]))
 
-def parallel_unknown_main(file,gene,gene_readindex_rows,needed_dict,avoid_poses,task_queue_1,task_queue_2,child_conn,locks):	
+def parallel_neg_main(file,gene,gene_readindex_rows,needed_dict,avoid_poses,task_queue_1,task_queue_2,child_conn,locks):	
 	search_seqs=[]
 	for key in needed_dict.keys():
 		search_seqs.append(key)
@@ -155,7 +155,7 @@ def parallel_unknown_main(file,gene,gene_readindex_rows,needed_dict,avoid_poses,
 	r_parent_conn_1,r_child_conn_1=multiprocessing.Pipe()
 
 	recv_num_1=len(gene_readindex_rows)
-	receiver_1=multiprocessing.Process(target=receive_unknown_seq_search,args=(recv_num_1,search_seqs,r_child_conn_1,parent_conn_1))
+	receiver_1=multiprocessing.Process(target=receive_neg_seq_search,args=(recv_num_1,search_seqs,r_child_conn_1,parent_conn_1))
 	receiver_1.start()
 
 	for _,index_info in gene_readindex_rows:
@@ -176,7 +176,7 @@ def parallel_unknown_main(file,gene,gene_readindex_rows,needed_dict,avoid_poses,
 	recv_num_2=len(gene_readindex_rows)
 	parent_conn_2,child_conn_2=multiprocessing.Pipe()
 	r_parent_conn_2,r_child_conn_2=multiprocessing.Pipe()
-	receiver_2=multiprocessing.Process(target=receive_unknown_partition,args=(recv_num_2,gene,r_child_conn_2,parent_conn_2))
+	receiver_2=multiprocessing.Process(target=receive_neg_partition,args=(recv_num_2,gene,r_child_conn_2,parent_conn_2))
 	receiver_2.start()
 
 	for _,index_info in gene_readindex_rows:
@@ -194,7 +194,7 @@ def parallel_unknown_main(file,gene,gene_readindex_rows,needed_dict,avoid_poses,
 	with locks['pipe_0']:
 		child_conn.send((gene,select_info,partition_data))
 
-def receive_unknown_main(recv_num,file,restrict_file_name,needed_dict,r_child_conn,parent_conn):
+def receive_neg_main(recv_num,file,restrict_file_name,needed_dict,r_child_conn,parent_conn):
 	LABEL=0
 	for i in range(recv_num):
 		while 1:
@@ -205,8 +205,8 @@ def receive_unknown_main(recv_num,file,restrict_file_name,needed_dict,r_child_co
 						needed_dict[select_info[0]]-=1
 						if needed_dict[select_info[0]]<=0:
 							del needed_dict[select_info[0]]
-						with open(file+'__'+restrict_file_name+'_unknown.json','a') as fw_json:
-							with open(file+'__'+restrict_file_name+'_unknown.index','a') as fw_json_index:
+						with open(file+'__'+restrict_file_name+'_neg.json','a') as fw_json:
+							with open(file+'__'+restrict_file_name+'_neg.index','a') as fw_json_index:
 								file_pos_start=fw_json.tell()
 								fw_json.write(json.dumps(partition_data[0])+'\n')
 								repeats=partition_data[1]
@@ -222,26 +222,26 @@ def receive_unknown_main(recv_num,file,restrict_file_name,needed_dict,r_child_co
 				sleep(0.01)
 	r_child_conn.send(needed_dict)
 
-def parallel_process_unknown(file,restrict_file_name,n_processes_0,n_processes_1,n_processes_2,Get_All=False):
+def parallel_process_negative(file,restrict_file_name,n_processes_0,n_processes_1,n_processes_2,half=False):
 	lock_0=dict()
 	for lock_type in ['read','pipe_0','pipe_1','pipe_2']:
 		lock_0[lock_type]=multiprocessing.Lock()
 	task_queue_0=multiprocessing.JoinableQueue(maxsize=n_processes_0*2)
-	consumers_0=[parallels.Consumer(task_queue=task_queue_0,task_function=parallel_unknown_main,locks=lock_0) for i in range(n_processes_0)]
+	consumers_0=[parallels.Consumer(task_queue=task_queue_0,task_function=parallel_neg_main,locks=lock_0) for i in range(n_processes_0)]
 	for process_0 in consumers_0:
 		process_0.start()
  
-	open(file+'__'+restrict_file_name+'_unknown.json','w')
-	open(file+'__'+restrict_file_name+'_unknown.index','w')
+	open(file+'__'+restrict_file_name+'_neg.json','w')
+	open(file+'__'+restrict_file_name+'_neg.index','w')
 
 	manager=multiprocessing.Manager()
 	task_queue_1=manager.JoinableQueue(maxsize=n_processes_1*2)
-	consumers_1=[parallels.Consumer(task_queue=task_queue_1,task_function=parallel_unknown_seq_search,locks=lock_0) for i in range(n_processes_1)]
+	consumers_1=[parallels.Consumer(task_queue=task_queue_1,task_function=parallel_neg_seq_search,locks=lock_0) for i in range(n_processes_1)]
 	for process_1 in consumers_1:
 		process_1.start()
 
 	task_queue_2=manager.JoinableQueue(maxsize=n_processes_2*2)
-	consumers_2=[parallels.Consumer(task_queue=task_queue_2,task_function=parallel_unknown_get_partition,locks=lock_0) for i in range(n_processes_2)]
+	consumers_2=[parallels.Consumer(task_queue=task_queue_2,task_function=parallel_neg_get_partition,locks=lock_0) for i in range(n_processes_2)]
 	for process_2 in consumers_2:
 		process_2.start()
 
@@ -258,21 +258,19 @@ def parallel_process_unknown(file,restrict_file_name,n_processes_0,n_processes_1
 			if gene not in avoid_dict:
 				avoid_dict[gene]=[]
 			avoid_dict[gene].append(int(pos))
-
-	MAX=99999
-	if Get_All:
+	if half:
 		for key in needed_dict:
-			needed_dict[key]=MAX
-		print('now got: ',{key: MAX-value for key,value in needed_dict.items()})
-	else:
-		print('now need: ',needed_dict)
-	
+			needed_dict[key]=int((needed_dict[key]+1)/2)
+	print('now need: ',needed_dict)
+
 	index_file=pd.read_csv(file+'.index')
 	genes=list(dict.fromkeys(index_file['transcript_id'].values.tolist()))
+	
 	random.shuffle(genes)
 	index_file=index_file.set_index('transcript_id')
 
-	parent_conn_0,child_conn_0=multiprocessing.Pipe()	
+	parent_conn_0,child_conn_0=multiprocessing.Pipe()
+
 	i=0
 	end_search=0
 	while 1:
@@ -295,18 +293,14 @@ def parallel_process_unknown(file,restrict_file_name,n_processes_0,n_processes_1
 			actual_recv_num+=1
 			if actual_recv_num>=RECV_NUM:
 				break
-
 		t_parent_conn,t_child_conn=multiprocessing.Pipe()
-		t_receiver=multiprocessing.Process(target=receive_unknown_main,args=(actual_recv_num,file,restrict_file_name,needed_dict,t_child_conn,parent_conn_0))
+		t_receiver=multiprocessing.Process(target=receive_neg_main,args=(actual_recv_num,file,restrict_file_name,needed_dict,t_child_conn,parent_conn_0))
 		t_receiver.start()
 		for task in temp_to_send:
 			task_queue_0.put(task)
 		t_receiver.join()
 		needed_dict=t_parent_conn.recv()
-		if Get_All:
-			print('now got: ',{key: MAX-value for key,value in needed_dict.items()})
-		else:
-			print('now need: ',needed_dict)
+		print('now need: ',needed_dict)
 		if len(needed_dict.keys())==0 or end_search==1:
 			break
 
@@ -321,6 +315,8 @@ if __name__ == '__main__':
 	parser=argparse.ArgumentParser(description="Get desired information of the same motif of input file from nanopolish events, number not limited")
 	parser.add_argument('-i','--input',required=True,help="Input file path")
 	parser.add_argument('-r','--restrict_file',required=True,help="ENST motifs to get from the input file")
+	parser.add_argument('-ha','--half',default=True,help="Whether only getting negative samples only half of the number of positive samples for each kind of motif")
+
 
 	parser.add_argument('-n0','--n_processes_0',default=3,help="The number of processes for processing task queue 0")
 	parser.add_argument('-n1','--n_processes_1',default=6,help="The number of processes for processing task queue 1")
@@ -342,5 +338,5 @@ if __name__ == '__main__':
 	RECV_NUM=args.recv_num
 
 	print('begin the processing of',args.input.split('/')[-1])
-	parallel_process_unknown(args.input,args.restrict_file,args.n_processes_0,args.n_processes_1,args.n_processes_2,Get_All=True)
+	parallel_process_negative(args.input,args.restrict_file,args.n_processes_0,args.n_processes_1,args.n_processes_2,half=args.half)
 	print('end the processing of',args.input.split('/')[-1])
