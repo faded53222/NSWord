@@ -1,12 +1,9 @@
-####change the file names to those you want to process in main.
 import multiprocessing
 import pandas as pd
 import numpy as np
+import argparse
 
 import parallels
-
-Chunk_Size=1000000
-N_processes=10
 
 def make_index(df,file_pos_start,out_path,lock):
 	df=df.set_index(['contig','read_index'])
@@ -23,6 +20,9 @@ def make_index(df,file_pos_start,out_path,lock):
 			file_pos_start=file_pos_end
 
 def parallel_make_index(file,chunk_size,n_processes):
+	print(file,chunk_size,n_processes)
+	return
+	
 	index_path=file+'.index'
 	with open(index_path,'w') as fw:
 		fw.write('transcript_id,read_index,file_pos_start,file_pos_end\n')
@@ -56,9 +56,14 @@ def parallel_make_index(file,chunk_size,n_processes):
 	task_queue=parallels.end_queue(task_queue,n_processes)
 	task_queue.join()
 
-if __name__ == '__main__':
-	####change the file names here
-	for nano_file in ['../events/SGNex_Hct116_directRNA_replicate3_run4.eventalign','../events/SGNex_Hct116_directRNA_replicate4_run3.eventalign','../events/SGNex_Hct116_directRNA_replicate3_run1.eventalign']:
-		print('begin making index for',nano_file.split('/')[-1])
-		parallel_make_index(nano_file,Chunk_Size,N_processes)
-		print('success making index for',nano_file.split('/')[-1])
+if __name__ == "__main__":
+	parser=argparse.ArgumentParser(description="Make index for nanopolish events")
+	parser.add_argument('-i','--input',required=True,help="Input file path")
+	parser.add_argument('-c','--chunk_size',default=1000000,help="The size of each chunk processed in parallel")
+	parser.add_argument('-n','--n_processes',default=10,help="Number of processes for processing")
+
+	args=parser.parse_args()
+
+	print('begin making index for',args.input.split('/')[-1])
+	parallel_make_index(args.input,args.chunk_size,args.n_processes)
+	print('success making index for',args.input.split('/')[-1])
