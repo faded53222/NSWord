@@ -87,3 +87,4 @@ The majority of the project's work is presented in Jupyter Notebook format.
 
 ``m6Anet.ipynb`` contains an implementation of [m6Anet](https://github.com/GoekeLab/m6anet/tree/master), with identical training data and tasks as in ``NSWord.ipynb``.
 
+In addition, we also provide a Python and command-line version for model training and testing, located in the ``python_ver`` folder.
