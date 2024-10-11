@@ -90,8 +90,6 @@ Run ``NSWord.ipynb`` block by block to train and test some conventional NSWord m
 
 Run specific blocks in ``Draw_Graphs.ipynb`` to get the gragh you need.
 
-``NSWord_extra.ipynb`` is for investigating "the impact of limiting the length or number of signal reads" and exploring "the role of transcript sequence in modification prediction".
-
 You can also get the result of [m6Anet](https://github.com/GoekeLab/m6anet/tree/master) model for predicting the same dataset by running ``m6Anet.ipynb``
 
 # Citing
