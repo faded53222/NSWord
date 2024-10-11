@@ -38,33 +38,28 @@ This function segments raw fast5 signals to each position within the transcripto
 See [Nanopolish](https://github.com/jts/nanopolish) for more information.
 
 Example:
+```bash
+cd ecode/data_process
+wget http://sg-nex-data.s3.amazonaws.com/data/sequencing_data_ont/fast5/SGNex_Hct116_directRNA_replicate3_run4/SGNex_Hct116_directRNA_replicate3_run4.tar.gz
+mkdir SGNex_Hct116_directRNA_replicate3_run4_fast5
+tar -zxvf SGNex_Hct116_directRNA_replicate3_run4.tar.gz -C SGNex_Hct116_directRNA_replicate3_run4_fast5
+wget http://sg-nex-data.s3.amazonaws.com/data/sequencing_data_ont/fastq/SGNex_Hct116_directRNA_replicate3_run4/SGNex_Hct116_directRNA_replicate3_run4.fastq.gz
+nanopolish index -d /SGNex_Hct116_directRNA_replicate3_run4_fast5 SGNex_Hct116_directRNA_replicate3_run4.fastq.gz
 
-    ```bash
-    cd ecode/data_process
-    wget http://sg-nex-data.s3.amazonaws.com/data/sequencing_data_ont/fast5/SGNex_Hct116_directRNA_replicate3_run4/SGNex_Hct116_directRNA_replicate3_run4.tar.gz
-    mkdir SGNex_Hct116_directRNA_replicate3_run4_fast5
-    tar -zxvf SGNex_Hct116_directRNA_replicate3_run4.tar.gz -C SGNex_Hct116_directRNA_replicate3_run4_fast5
-    wget http://sg-nex-data.s3.amazonaws.com/data/sequencing_data_ont/fastq/SGNex_Hct116_directRNA_replicate3_run4/SGNex_Hct116_directRNA_replicate3_run4.fastq.gz
-    nanopolish index -d /SGNex_Hct116_directRNA_replicate3_run4_fast5 SGNex_Hct116_directRNA_replicate3_run4.fastq.gz
-    ```
-    
-    ```bash
-    wget http://sg-nex-data.s3.amazonaws.com/data/annotations/transcriptome_fasta/Homo_sapiens.GRCh38.cdna.ncrna.fa
-    wget http://sg-nex-data.s3.amazonaws.com/data/annotations/transcriptome_fasta/Homo_sapiens.GRCh38.cdna.ncrna.fa.fai
-    minimap2 -ax map-ont -t 8 Homo_sapiens.GRCh38.cdna.ncrna.fa SGNex_Hct116_directRNA_replicate3_run4.fastq.gz | samtools sort -o SGNex_Hct116_directRNA_replicate3_run4.sorted.bam -T SGNex_Hct116_directRNA_replicate3_run4.tmp
-    samtools index SGNex_Hct116_directRNA_replicate3_run4.sorted.bam
-    ```
+wget http://sg-nex-data.s3.amazonaws.com/data/annotations/transcriptome_fasta/Homo_sapiens.GRCh38.cdna.ncrna.fa
+wget http://sg-nex-data.s3.amazonaws.com/data/annotations/transcriptome_fasta/Homo_sapiens.GRCh38.cdna.ncrna.fa.fai
+minimap2 -ax map-ont -t 8 Homo_sapiens.GRCh38.cdna.ncrna.fa SGNex_Hct116_directRNA_replicate3_run4.fastq.gz | samtools sort -o SGNex_Hct116_directRNA_replicate3_run4.sorted.bam -T SGNex_Hct116_directRNA_replicate3_run4.tmp
+samtools index SGNex_Hct116_directRNA_replicate3_run4.sorted.bam
 
-    ```bash
-    nanopolish eventalign \
-    	--threads=10 \
-    	--signal-index \
-    	--min-mapping-quality=20 \
-        --reads SGNex_Hct116_directRNA_replicate3_run4.fastq.gz \
-        --bam SGNex_Hct116_directRNA_replicate3_run4.sorted.bam \
-        --genome Homo_sapiens.GRCh38.cdna.ncrna.fa \
-        --scale-events > SGNex_Hct116_directRNA_replicate3_run4.eventalign.txt
-    ```
+nanopolish eventalign \
+    --threads=10 \
+    --signal-index \
+    --min-mapping-quality=20 \
+    --reads SGNex_Hct116_directRNA_replicate3_run4.fastq.gz \
+    --bam SGNex_Hct116_directRNA_replicate3_run4.sorted.bam \
+    --genome Homo_sapiens.GRCh38.cdna.ncrna.fa \
+    --scale-events > SGNex_Hct116_directRNA_replicate3_run4.eventalign.txt
+```
 
 After getting nanopolish eventalign results, we need to preprocess the segmented raw signal file using ``make_index.py``, ``process.py`` and ``process_neg.py``.
 
