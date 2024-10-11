@@ -75,6 +75,8 @@ python process_neg_appoarch1.py -i SGNex_Hct116_directRNA_replicate3_run4.eventa
 python process_neg_appoarch2.py -i SGNex_Hct116_directRNA_replicate3_run4.eventalign -r others_reduced_by_Hct116_ENST
 ```
 
+The preprocessing results include an ``.index`` index file and a ``.json`` data file, both of which should be placed in the ``edata/Dataset/m6A`` folder for subsequent use.
+
 ## Usage
 
 We offer two ways to run the project:
