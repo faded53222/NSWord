@@ -81,13 +81,13 @@ The preprocessing results include an ``.index`` index file and a ``.json`` data 
 
 The majority of the project's work is presented in Jupyter Notebook format.
 
-``NSWord.ipynb`` encompass the primary processes of the project, including dataset creation, model structure, training, testing and SHAP interpretability.
+``NSWord.ipynb`` encompasses the primary processes of the project, including dataset creation, model structure, training, testing and SHAP interpretability.
 
 ``Draw_Graphs.ipynb`` is responsible for generating the various graphs used for analysis.
 
 ``m6Anet.ipynb`` contains an implementation of [m6Anet](https://github.com/GoekeLab/m6anet/tree/master), with identical training data and tasks as in ``NSWord.ipynb``.
 
-In addition, we also provide a basic Python and command-line version for model training and testing, located in the ``python_ver`` folder.
+In addition, we provide a basic Python and command-line version for model training and testing, located in the ``python_ver`` folder.
 
 Example:
 ```bash
