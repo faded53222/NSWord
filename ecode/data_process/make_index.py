@@ -20,9 +20,6 @@ def make_index(df,file_pos_start,out_path,lock):
 			file_pos_start=file_pos_end
 
 def parallel_make_index(file,chunk_size,n_processes):
-	print(file,chunk_size,n_processes)
-	return
-	
 	index_path=file+'.index'
 	with open(index_path,'w') as fw:
 		fw.write('transcript_id,read_index,file_pos_start,file_pos_end\n')
