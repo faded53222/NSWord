@@ -61,13 +61,11 @@ nanopolish eventalign \
     --scale-events > SGNex_Hct116_directRNA_replicate3_run4.eventalign.txt
 ```
 
-After getting nanopolish eventalign results, we need to preprocess the segmented raw signal file using ``make_index.py``, ``process.py`` and ``process_neg.py``.
+After getting nanopolish eventalign results, we need to preprocess the segmented raw signal file using ``make_index.py``, ``process.py``, ``process_neg_approach1.py`` and ``process_neg_approach2.py``.
 
-``make_index.py`` builds index for faster running. ``process.py`` gets positive samples for the dataset. And ``process_neg.py`` gets negative samples with the same 5-mer motifs as positive ones.
+The restriction file, which contains the loci to be extracted from the events results, is obtained in ``process_sites.ipynb``.
 
-Main functions are within those files, take care with '####' annotations before running them.
-
-RNA modification sites such as those in ``m6Asites.txt`` need to be converted to ENST coordinates with ``ENSG_to_ENST.ipynb`` to be used for searching positive samples in ``process.py``.
+``make_index.py`` builds index for faster running. ``process.py`` gets positive samples for the dataset. ``process_neg_approach1.py`` gets half of the negative samples with the same 5-mer motifs as positive ones. And ``process_neg_approach2.py`` gets the other half of the negative samples by selecting sites that are m6A modifiable in other cell-lines but not in Hct116.
 
 ## Usage
 
