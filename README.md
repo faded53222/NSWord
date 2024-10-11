@@ -38,6 +38,7 @@ This function segments raw fast5 signals to each position within the transcripto
 See [Nanopolish](https://github.com/jts/nanopolish) for more information.
 
 Example:
+
     ```bash
     cd ecode/data_process
     wget http://sg-nex-data.s3.amazonaws.com/data/sequencing_data_ont/fast5/SGNex_Hct116_directRNA_replicate3_run4/SGNex_Hct116_directRNA_replicate3_run4.tar.gz
