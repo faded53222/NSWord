@@ -279,14 +279,14 @@ if __name__ == '__main__':
 	parser.add_argument('-i','--input',required=True,help="Input file path")
 	parser.add_argument('-r','--restrict_file',required=True,help="ENST motifs to get from the input file")
 
-	parser.add_argument('-n0','--n_processes_0',default=3,help="The number of processes for processing task queue 0")
-	parser.add_argument('-n1','--n_processes_1',default=6,help="The number of processes for processing task queue 1")
-	parser.add_argument('-n2','--n_processes_2',default=12,help="The number of processes for processing task queue 2")
+	parser.add_argument('-n0','--n_processes_0',default=3,type=int,help="The number of processes for processing task queue 0")
+	parser.add_argument('-n1','--n_processes_1',default=6,type=int,help="The number of processes for processing task queue 1")
+	parser.add_argument('-n2','--n_processes_2',default=12,type=int,help="The number of processes for processing task queue 2")
 
-	parser.add_argument('-s','--side_window_size',default=12,help="The number of neighbor sites to obtain for each side")
-	parser.add_argument('-cr','--min_cover_rate',default=0.8,help="The lowest rate of available sites for a segment to be qualified")
-	parser.add_argument('-ri','--repeat_size_min',default=20,help="The lowest number of reads for a segment to be qualified")
-	parser.add_argument('-ra','--repeat_size_max',default=50,help="The number of obtained reads")
+	parser.add_argument('-s','--side_window_size',default=12,type=int,help="The number of neighbor sites to obtain for each side")
+	parser.add_argument('-cr','--min_cover_rate',default=0.8,type=float,help="The lowest rate of available sites for a segment to be qualified")
+	parser.add_argument('-ri','--repeat_size_min',default=20,type=int,help="The lowest number of reads for a segment to be qualified")
+	parser.add_argument('-ra','--repeat_size_max',default=50,type=int,help="The number of obtained reads")
 
 	args=parser.parse_args()
 

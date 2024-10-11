@@ -56,8 +56,8 @@ def parallel_make_index(file,chunk_size,n_processes):
 if __name__ == "__main__":
 	parser=argparse.ArgumentParser(description="Make index for nanopolish events")
 	parser.add_argument('-i','--input',required=True,help="Input file path")
-	parser.add_argument('-c','--chunk_size',default=1000000,help="The size of each chunk processed in parallel")
-	parser.add_argument('-n','--n_processes',default=10,help="The number of processes for processing")
+	parser.add_argument('-c','--chunk_size',default=1000000,type=int,help="The size of each chunk processed in parallel")
+	parser.add_argument('-n','--n_processes',default=10,type=int,help="The number of processes for processing")
 
 	args=parser.parse_args()
 
