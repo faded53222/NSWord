@@ -79,18 +79,11 @@ The preprocessing results include an ``.index`` index file and a ``.json`` data 
 
 ## Usage
 
-We offer two ways to run the project:
-1. **Jupyter Notebook Version**: This version allows users to run and interact with code blocks step by step.
-2. **Command-line Python Version**: A step-by-step Python script that can be executed directly from the command line.
+The majority of the project's work is presented in Jupyter Notebook format.
 
-1. Using the Jupyter Notebook Version
+``NSWord.ipynb`` encompass the primary processes of the project, including dataset creation, model structure, training, testing and SHAP interpretability.
 
+``Draw_Graphs.ipynb`` is responsible for generating the various graphs used for analysis.
 
-Run ``NSWord.ipynb`` block by block to train and test some conventional NSWord models. 
+``m6Anet.ipynb`` contains an implementation of [m6Anet](https://github.com/GoekeLab/m6anet/tree/master), with identical training data and tasks as in ``NSWord.ipynb``.
 
-Run specific blocks in ``Draw_Graphs.ipynb`` to get the gragh you need.
-
-You can also get the result of [m6Anet](https://github.com/GoekeLab/m6anet/tree/master) model for predicting the same dataset by running ``m6Anet.ipynb``
-
-# Citing
-If you use NSWord in your research, please cite ####
