@@ -4,6 +4,14 @@
 ## Abstract
 RNA modifications are a common occurrence in transcriptome and play a crucial role in various biological processes. Nanopore direct RNA sequencing (DRS) provides raw current signal readings, which carry information of modifications. Supervised machine learning methods using DRS are advantageous for RNA modification detection. However, existing methods for RNA modification detection do not adequately capture sequential signal features within and between reads. Here, we represent NSWord, an improved transformer model with novel self-attention blocks that integrates the transcript sequence and its signal reads to produce a comprehensive site-level prediction. NSWord outperforms existing deep learning methods, particularly in its ability to utilize a greater number of reads to produce more accurate predictions. Additionally, we conducted a series of studies using the SHAP method, investigating the factors influencing the RNA modifications from a perspective of interpretability.
 
+```markdown
+```bash
+# This is a bash script example
+mkdir new_folder
+cd new_folder
+wget https://example.com/file.tar.gz
+tar -zxvf file.tar.gz
+
 ## Installation
 1. **Clone the repository**:
 
