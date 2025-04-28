@@ -92,7 +92,7 @@ In addition, we provide a basic Python and command-line version for model traini
 Example:
 ```bash
 cd NSWord/python_ver
-python create_dataset.py --path ../edata/DataSet/m6A --use_file_name use_files --save_name m6A_NSWord
+python create_dataset.py --path m6A --use_file_name use_files --save_name m6A_NSWord
 python train.py --load_dataset_name m6A_NSWord --epochs 150 --learning_rate 0.001 --seq_reduce 16 -- read_reduce 0
 python test.py --load_dataset_name m6A_NSWord --load_model_name NSWord_222000_50_50reads_9sites --seq_reduce 16 -- read_reduce 0
 ```
