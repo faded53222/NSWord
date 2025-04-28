@@ -65,7 +65,7 @@ After getting nanopolish eventalign results, we need to preprocess the segmented
 
 The restriction files, which contain the sites to be extracted from the events results, are obtained in ``process_sites.ipynb``.
 
-``make_index.py`` builds index for faster running. ``process.py`` gets positive samples for the dataset. ``process_neg_approach1.py`` gets half of the negative samples with the same 5-mer motifs as positive ones. And ``process_neg_approach2.py`` gets the other half of the negative samples by selecting sites that are m6A modifiable in other cell-lines but not in Hct116.
+``make_index.py`` builds index for faster running. ``process.py`` gets positive samples for the dataset. ``process_neg_approach1.py`` gets half of the negative samples with the same 5-mer motifs as positive ones. And ``process_neg_approach2.py`` gets the other half of the negative samples by selecting sites that are m6A modifiable in other cell-lines but not in Hct116. Run the commands with '-help' for parameter details.
 
 Example:
 ```bash
@@ -87,7 +87,7 @@ The majority of the project's work is presented in Jupyter Notebook format.
 
 ``m6Anet.ipynb`` contains an implementation of [m6Anet](https://github.com/GoekeLab/m6anet/tree/master), with identical training data and tasks as in ``NSWord.ipynb``.
 
-In addition, we provide a basic Python and command-line version for model training and testing, located in the ``python_ver`` folder.
+In addition, we provide a basic Python and command-line version for model training and testing, located in the ``python_ver`` folder. Run the commands with '-help' for parameter details.
 
 Example:
 ```bash
