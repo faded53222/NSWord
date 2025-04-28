@@ -35,7 +35,7 @@ def test(model,test_loader,device,seq_reduce=0,read_reduce=0):
 	print('AUC:{:.4f}, accuracy:{:.4f}%'.format(roauc,accuracy))
 	torch.cuda.empty_cache()
 
-def train(model,train_loader,test_loader,device,optimizer,loss_func,epochs,seq_reduce=0,read_reduce=0):
+def train(model,train_loader,val_loader,device,optimizer,loss_func,epochs,seq_reduce=0,read_reduce=0):
 	torch.cuda.empty_cache()
 	for epoch in range(epochs):
 		total_loss=0
@@ -63,7 +63,7 @@ def train(model,train_loader,test_loader,device,optimizer,loss_func,epochs,seq_r
 		print('epoch {}, loss:{:.4f}'.format(epoch+1,total_loss.item()/len(train_loader)))
 		if epoch%10==9:
 			print('At epoch '+str(epoch+1),':')
-			test(model,test_loader,device,seq_reduce,read_reduce)
+			test(model,val_loader,device,seq_reduce,read_reduce)
 			torch.save(model.state_dict(),'./model/model_'+str(epoch+1)+'_'+str(int(time.time()))+'.pkl')
 
 if __name__ == '__main__':
@@ -79,13 +79,13 @@ if __name__ == '__main__':
 
 	with open('../edata/Save_DataSet/'+args.load_dataset_name+'_train_set.pkl','rb') as f:
 		flattened_train_set=pickle.load(f)
-	with open('../edata/Save_DataSet/'+args.load_dataset_name+'_test_set.pkl','rb') as f:
-		flattened_test_set=pickle.load(f)
+	with open('../edata/Save_DataSet/'+args.load_dataset_name+'_val_set.pkl','rb') as f:
+		flattened_val_set=pickle.load(f)
 	print('len(flattened_train_set)',len(flattened_train_set))
-	print('len(flattened_test_set)',len(flattened_test_set))
+	print('len(flattened_val_set)',len(flattened_val_set))
 	
 	train_loader=DataLoader(flattened_train_set,batch_size=5,shuffle=True)
-	test_loader=DataLoader(flattened_test_set,batch_size=5,shuffle=True)
+	val_loader=DataLoader(flattened_val_set,batch_size=5,shuffle=True)
 	
 	torch.cuda.manual_seed_all(0)
 	
@@ -95,4 +95,4 @@ if __name__ == '__main__':
 				clear_cache_between_blocks=False).to(device)
 	optimizer=optim.Adam(model.parameters(),lr=args.learning_rate)
 	loss_func=nn.BCELoss()
-	train(model,train_loader,test_loader,device,optimizer,loss_func,args.epochs,seq_reduce=args.seq_reduce,read_reduce=args.read_reduce)
+	train(model,train_loader,val_loader,device,optimizer,loss_func,args.epochs,seq_reduce=args.seq_reduce,read_reduce=args.read_reduce)

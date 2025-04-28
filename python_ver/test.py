@@ -89,11 +89,11 @@ def detailed_test(model,test_loader,device,seq_reduce=0,read_reduce=0,curve_name
 
 if __name__ == '__main__':
 	parser=argparse.ArgumentParser(description="Training")
-	parser.add_argument('-l','--load_dataset_name',required=True,help="The name of saved dataset")
+	parser.add_argument('-l','--load_dataset_name',required=True,help="The name of saved dataset, should be in the folder 'edata/Save_DataSet'")
 	parser.add_argument('-sr','--seq_reduce',default=16,type=int,help="The number of not used sites")
 	parser.add_argument('-rr','--read_reduce',default=0,type=int,help="The number of not used reads")
 
-	parser.add_argument('-m','--load_model_name',required=True,help="The loaded model for testing")
+	parser.add_argument('-m','--load_model_name',required=True,help="The loaded model for testing, should be in the folder 'model'")
 
 	args=parser.parse_args()
 
@@ -106,5 +106,6 @@ if __name__ == '__main__':
 	model=Nano(c_s=4,c_x=3,c_emb=16,c_hidden_att=16,c_o=1,no_heads=8,blocks_lis=[2,2,2,0,0,0],
 				dropout=0.2,transition_n=2,inf=1e9,eps=1e-8,
 				clear_cache_between_blocks=False).to(device)
-	model.load_state_dict(torch.load('../model/NSWord_222000_50_50reads_9sites.pkl',weights_only=True))
+	#'../model/NSWord_222000_50_50reads_9sites.pkl'
+	model.load_state_dict(torch.load('../model/'+args.load_model_name+'.pkl',weights_only=True))
 	detailed_test(model,test_loader,device,seq_reduce=args.seq_reduce,read_reduce=args.read_reduce,curve_name=None,histo_name=None)
