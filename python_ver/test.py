@@ -90,10 +90,9 @@ def detailed_test(model,test_loader,device,seq_reduce=0,read_reduce=0,curve_name
 if __name__ == '__main__':
 	parser=argparse.ArgumentParser(description="Training")
 	parser.add_argument('-l','--load_dataset_name',required=True,help="The name of saved dataset, should be in the folder 'edata/Save_DataSet'")
+	parser.add_argument('-m','--load_model_name',required=True,help="The loaded model for testing, should be in the folder 'model'")
 	parser.add_argument('-sr','--seq_reduce',default=16,type=int,help="The number of not used sites")
 	parser.add_argument('-rr','--read_reduce',default=0,type=int,help="The number of not used reads")
-
-	parser.add_argument('-m','--load_model_name',required=True,help="The loaded model for testing, should be in the folder 'model'")
 
 	args=parser.parse_args()
 
