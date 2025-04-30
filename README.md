@@ -94,6 +94,8 @@ Next:
 
 These files constitute the dataset used by the models in demonstration codes.
 
+As shown above, the Nanopore sequencing data and m6A modification sites analyzed in the Hct116 cell line were sourced from [SG-NEx](https://github.com/GoekeLab/sg-nex-data).
+
 ## Usage
 
 The majority of the project's work is presented in Jupyter Notebook format.
@@ -105,8 +107,6 @@ The majority of the project's work is presented in Jupyter Notebook format.
 ``m6Anet.ipynb`` contains an implementation of [m6Anet](https://github.com/GoekeLab/m6anet/tree/master), with identical training data and tasks as in ``NSWord.ipynb``.
 
 In addition, we provide a basic Python and command-line version for model training and testing, located in the ``python_ver`` folder. Run the commands with '-help' for parameter details.
-
-As demonstrated above, the Nanopore sequencing data and m6A modification sites analyzed in the Hct116 cell line were sourced from [SG-NEx](https://github.com/GoekeLab/sg-nex-data).
 
 Example:
 ```bash
