@@ -106,6 +106,8 @@ The majority of the project's work is presented in Jupyter Notebook format.
 
 In addition, we provide a basic Python and command-line version for model training and testing, located in the ``python_ver`` folder. Run the commands with '-help' for parameter details.
 
+As demonstrated above, the Nanopore sequencing data and m6A modification sites analyzed in the Hct116 cell line were sourced from [SG-NEx](https://github.com/GoekeLab/sg-nex-data).
+
 Example:
 ```bash
 cd NSWord/python_ver
