@@ -61,7 +61,7 @@ nanopolish eventalign \
     --genome Homo_sapiens.GRCh38.cdna.ncrna.fa \
     --scale-events > SGNex_Hct116_directRNA_replicate3_run4.eventalign.txt
 ```
-All data processing steps and code from this point onward are also contained in the ``ecode/data_process`` directory.
+All data processing steps and python files from this point onward are also contained in the ``ecode/data_process`` directory.
 
 The restriction files, which contain the sites to be extracted from the events results, are already included in this repository and can be obtained in ``process_sites.ipynb``.
 
@@ -82,8 +82,17 @@ python process.py -i SGNex_Hct116_directRNA_replicate3_run4.eventalign --restric
 python process_neg_appoarch1.py -i SGNex_Hct116_directRNA_replicate3_run4.eventalign -r Hct116_ENST
 python process_neg_appoarch2.py -i SGNex_Hct116_directRNA_replicate3_run4.eventalign -r others_reduced_by_Hct116_ENST
 ```
+The processing results include an ``.index`` index file and a ``.json`` data file.
 
-The preprocessing results include an ``.index`` index file and a ``.json`` data file, both of which should be placed in the ``edata/Dataset/m6A`` folder for subsequent use.
+Execute the commands provided in the code blocks above would generate the final processed files for ``SGNex_Hct116_directRNA_replicate3_run4``.
+Next:
+    Re-run the same code blocks, replacing ``SGNex_Hct116_directRNA_replicate3_run4 `` with ``SGNex_Hct116_directRNA_replicate3_run1 ``, ``SGNex_Hct116_directRNA_replicate4_run3 ``.
+    Store all outputs in the ``edata/Dataset/m6A`` directory.
+These files constitute the dataset used by the models in demonstration codes.
+
+
+SGNex_Hct116_directRNA_replicate4_run3
+both of which should be placed in the ``edata/Dataset/m6A`` folder for subsequent use.
 
 ## Usage
 
