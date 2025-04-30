@@ -62,10 +62,12 @@ nanopolish eventalign \
     --scale-events > SGNex_Hct116_directRNA_replicate3_run4.eventalign.txt
 ```
 
-The restriction files, which contain the sites to be extracted from the events results, are obtained in ``process_sites.ipynb``.
+The restriction files, which contain the sites to be extracted from the events results, are already included in this repository and can be obtained in ``process_sites.ipynb``.
+
 Example of getting the m6A sites restriction file of the Hct116 cell line:
 ```bash
 wget http://sg-nex-data.s3.amazonaws.com/data/annotations/m6ACE_seq_reference_table/Hct116_m6ACEsites.txt -O Hct116.txt
+pyensembl install --release 110 --species homo_sapiens
 python ENSG_to_ENST.py -i Hct116
 ```
 
