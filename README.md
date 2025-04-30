@@ -84,19 +84,15 @@ python process_neg_appoarch2.py -i SGNex_Hct116_directRNA_replicate3_run4.eventa
 ```
 The processing results include an ``.index`` index file and a ``.json`` data file.
 
-Execute the commands provided in the code blocks above would generate the final processed files for ``SGNex_Hct116_directRNA_replicate3_run4``.
+- Execute the commands provided in the code blocks above would generate the final processed files for ``SGNex_Hct116_directRNA_replicate3_run4``.
 
-Next:
+Next: 
 
-    Re-run the same code blocks, replacing ``SGNex_Hct116_directRNA_replicate3_run4 `` with ``SGNex_Hct116_directRNA_replicate3_run1 ``, ``SGNex_Hct116_directRNA_replicate4_run3 ``.
+- Re-run the same code blocks, replacing ``SGNex_Hct116_directRNA_replicate3_run4 `` with ``SGNex_Hct116_directRNA_replicate3_run1 ``, ``SGNex_Hct116_directRNA_replicate4_run3 ``.
     
-    Store all outputs in the ``edata/Dataset/m6A`` directory.
+- Store all outputs in the ``edata/Dataset/m6A`` directory.
 
 These files constitute the dataset used by the models in demonstration codes.
-
-
-SGNex_Hct116_directRNA_replicate4_run3
-both of which should be placed in the ``edata/Dataset/m6A`` folder for subsequent use.
 
 ## Usage
 
