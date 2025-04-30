@@ -61,6 +61,7 @@ nanopolish eventalign \
     --genome Homo_sapiens.GRCh38.cdna.ncrna.fa \
     --scale-events > SGNex_Hct116_directRNA_replicate3_run4.eventalign.txt
 ```
+All data processing steps and code from this point onward are also contained in the ``ecode/data_process`` directory.
 
 The restriction files, which contain the sites to be extracted from the events results, are already included in this repository and can be obtained in ``process_sites.ipynb``.
 
@@ -70,8 +71,6 @@ wget http://sg-nex-data.s3.amazonaws.com/data/annotations/m6ACE_seq_reference_ta
 pyensembl install --release 110 --species homo_sapiens
 python ENSG_to_ENST.py -i Hct116
 ```
-
-All data processing steps and code from this point onward are also contained in the ``ecode/data_process`` directory.
 
 After getting nanopolish eventalign results, we need to preprocess the segmented raw signal file using ``make_index.py``, ``process.py``, ``process_neg_approach1.py`` and ``process_neg_approach2.py``.
 ``make_index.py`` builds index for faster running. ``process.py`` gets positive samples for the dataset. ``process_neg_approach1.py`` gets half of the negative samples with the same 5-mer motifs as positive ones. And ``process_neg_approach2.py`` gets the other half of the negative samples by selecting sites that are m6A modifiable in other cell-lines but not in Hct116. Run the commands with '-help' for parameter details.
