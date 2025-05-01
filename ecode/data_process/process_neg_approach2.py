@@ -12,6 +12,8 @@ from operator import itemgetter
 
 import parallels
 
+SIDE_WINDOW_SIZE,MIN_COVER_RATE,REPEAT_SIZE_MIN,REPEAT_SIZE_MAX=12,0.8,20,50
+
 def parallel_seq_search(read_info,read_index,search_seqs,child_conn,locks):
 	searched_pos=[]
 	parallel_seq_search_dic={}
@@ -279,9 +281,9 @@ if __name__ == '__main__':
 	parser.add_argument('-i','--input',required=True,help="Input file path")
 	parser.add_argument('-r','--restrict_file',required=True,help="ENST motifs to get from the input file")
 
-	parser.add_argument('-n0','--n_processes_0',default=3,type=int,help="The number of processes for processing task queue 0")
-	parser.add_argument('-n1','--n_processes_1',default=6,type=int,help="The number of processes for processing task queue 1")
-	parser.add_argument('-n2','--n_processes_2',default=12,type=int,help="The number of processes for processing task queue 2")
+	parser.add_argument('-n0','--n_processes_0',default=4,type=int,help="The number of processes for processing task queue 0")
+	parser.add_argument('-n1','--n_processes_1',default=4,type=int,help="The number of processes for processing task queue 1")
+	parser.add_argument('-n2','--n_processes_2',default=8,type=int,help="The number of processes for processing task queue 2")
 
 	parser.add_argument('-s','--side_window_size',default=12,type=int,help="The number of neighbor sites to obtain for each side")
 	parser.add_argument('-cr','--min_cover_rate',default=0.8,type=float,help="The lowest rate of available sites for a segment to be qualified")
@@ -290,7 +292,6 @@ if __name__ == '__main__':
 
 	args=parser.parse_args()
 
-	global SIDE_WINDOW_SIZE,MIN_COVER_RATE,REPEAT_SIZE_MIN,REPEAT_SIZE_MAX
 	SIDE_WINDOW_SIZE=args.side_window_size
 	MIN_COVER_RATE=args.min_cover_rate
 	REPEAT_SIZE_MIN=args.repeat_size_min

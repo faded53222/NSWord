@@ -9,12 +9,16 @@ from itertools import groupby
 
 import parallels
 
-def parallel_neg_seq_search(read_info,search_seqs,avoid_poses,child_conn,locks):
+
+SIDE_WINDOW_SIZE,MIN_COVER_RATE,REPEAT_SIZE_MIN,REPEAT_SIZE_MAX,RECV_NUM=12,0.8,20,50,12
+
+def parallel_neg_seq_search(read_info,read_index,search_seqs,avoid_poses,child_conn,locks):
 	searched_pos=[]
 	parallel_seq_search_dic={}
 	for seq in search_seqs:
 		parallel_seq_search_dic[seq]=[]
-		
+
+	read_info=read_info[read_info['read_index']==read_index].copy()
 	read_info=read_info[read_info['reference_kmer']==read_info['model_kmer']].copy()	
 	if len(read_info.index)==0:
 		child_conn.send(None)
@@ -26,7 +30,6 @@ def parallel_neg_seq_search(read_info,search_seqs,avoid_poses,child_conn,locks):
 		if row['position'] not in avoid_poses:
 			if row['reference_kmer'] in search_seqs:
 				parallel_seq_search_dic[row['reference_kmer']].append(row['position'])
-
 	with locks['pipe_1']:
 		child_conn.send(parallel_seq_search_dic)
 
@@ -60,7 +63,8 @@ def receive_neg_seq_search(recv_num,search_seqs,r_child_conn,parent_conn):
 	else:
 		r_child_conn.send(None)
 
-def parallel_neg_get_partition(read_info,select_info,child_conn,locks):
+def parallel_neg_get_partition(read_info,read_index,select_info,child_conn,locks):
+	read_info=read_info[read_info['read_index']==read_index].copy()
 	read_info=read_info[read_info['reference_kmer']==read_info['model_kmer']].copy()
 	read_info=read_info[(read_info['position']>=select_info[1]-SIDE_WINDOW_SIZE)&(read_info['position']<=select_info[1]+SIDE_WINDOW_SIZE)].copy()
 	if len(read_info.index)==0:
@@ -95,10 +99,10 @@ def parallel_neg_get_partition(read_info,select_info,child_conn,locks):
 
 	partition_str=''
 	partition_data=[]
-	c_pos=pos_start
+	c_pos=int(pos_start)
 
 	for j in range(len(read_info.index)):
-		j_pos=read_info.iloc[j]['position']
+		j_pos=int(read_info.iloc[j]['position'])
 		for k in reversed(range(j_pos-c_pos-1)):
 			if k<2:
 				partition_str+=read_info.iloc[j]['reference_kmer'][1-k]
@@ -162,11 +166,12 @@ def parallel_neg_main(file,gene,gene_readindex_rows,needed_dict,avoid_poses,task
 		with locks['read'],open(file+'.txt','r') as f:
 			f.seek(index_info['file_pos_start'],0)
 			read_str=f.read(index_info['file_pos_end']-index_info['file_pos_start'])
+		read_index=index_info['read_index']
 		read_info=pd.read_csv(StringIO(read_str),delimiter='\t',index_col=False,
 						names=['contig','position','reference_kmer','read_index','strand','event_index',
 							   'event_level_mean','event_stdv','event_length','model_kmer','model_mean',
 							   'model_stdv','standardized_level','start_idx','end_idx'])
-		task_queue_1.put((read_info,search_seqs,avoid_poses,child_conn_1))
+		task_queue_1.put((read_info,read_index,search_seqs,avoid_poses,child_conn_1))
 	receiver_1.join()
 	select_info=r_parent_conn_1.recv()
 	if select_info is None:
@@ -183,11 +188,12 @@ def parallel_neg_main(file,gene,gene_readindex_rows,needed_dict,avoid_poses,task
 		with locks['read'],open(file+'.txt','r') as f:
 			f.seek(index_info['file_pos_start'],0)
 			read_str=f.read(index_info['file_pos_end']-index_info['file_pos_start'])
+		read_index=index_info['read_index']
 		read_info=pd.read_csv(StringIO(read_str),delimiter='\t',index_col=False,
 						names=['contig','position','reference_kmer','read_index','strand','event_index',
 							   'event_level_mean','event_stdv','event_length','model_kmer','model_mean',
 							   'model_stdv','standardized_level','start_idx','end_idx'])
-		task_queue_2.put((read_info,select_info,child_conn_2))
+		task_queue_2.put((read_info,read_index,select_info,child_conn_2))
 
 	receiver_2.join()
 	partition_data=r_parent_conn_2.recv()
@@ -283,13 +289,13 @@ def parallel_process_negative(file,restrict_file_name,n_processes_0,n_processes_
 			gene=genes[i]
 			i+=1
 			read_index_l_info=list(index_file.loc[[gene]].iterrows())
+			print(gene,len(read_index_l_info))
 			if len(read_index_l_info)<50:
 				continue
-			print(gene,len(read_index_l_info))
 			avoid_poses=[]
 			if gene[:15] in avoid_dict:
 				avoid_poses=avoid_dict[gene[:15]]
-			temp_to_send.append((file,gene[:15],read_index_l_info[:500],needed_dict,avoid_poses,task_queue_1,task_queue_2,child_conn_0))
+			temp_to_send.append((file,gene[:15],read_index_l_info[:250],needed_dict,avoid_poses,task_queue_1,task_queue_2,child_conn_0))
 			actual_recv_num+=1
 			if actual_recv_num>=RECV_NUM:
 				break
@@ -317,19 +323,18 @@ if __name__ == '__main__':
 	parser.add_argument('-r','--restrict_file',required=True,help="ENST motifs to get from the input file")
 	parser.add_argument('-ha','--half',default=1,type=int,help="Whether only getting negative samples only half of the number of positive samples for each kind of motif, set this parameter negative if you want to get the same number of negative sites to positive by this approach")
 
-	parser.add_argument('-n0','--n_processes_0',default=3,type=int,help="The number of processes for processing task queue 0")
-	parser.add_argument('-n1','--n_processes_1',default=6,type=int,help="The number of processes for processing task queue 1")
-	parser.add_argument('-n2','--n_processes_2',default=12,type=int,help="The number of processes for processing task queue 2")
+	parser.add_argument('-n0','--n_processes_0',default=4,type=int,help="The number of processes for processing task queue 0")
+	parser.add_argument('-n1','--n_processes_1',default=4,type=int,help="The number of processes for processing task queue 1")
+	parser.add_argument('-n2','--n_processes_2',default=8,type=int,help="The number of processes for processing task queue 2")
 
 	parser.add_argument('-s','--side_window_size',default=12,type=int,help="The number of neighbor sites to obtain for each side")
 	parser.add_argument('-cr','--min_cover_rate',default=0.8,type=float,help="The lowest rate of available sites for a segment to be qualified")
 	parser.add_argument('-ri','--repeat_size_min',default=20,type=int,help="The lowest number of reads for a segment to be qualified")
 	parser.add_argument('-ra','--repeat_size_max',default=50,type=int,help="The number of obtained reads")
 	parser.add_argument('-rn','--recv_num',default=12,type=int,help="The number of tasks waiting to be completed at one time")
-
+	
 	args=parser.parse_args()
-
-	global SIDE_WINDOW_SIZE,MIN_COVER_RATE,REPEAT_SIZE_MIN,REPEAT_SIZE_MAX,RECV_NUM
+	
 	SIDE_WINDOW_SIZE=args.side_window_size
 	MIN_COVER_RATE=args.min_cover_rate
 	REPEAT_SIZE_MIN=args.repeat_size_min
@@ -338,4 +343,4 @@ if __name__ == '__main__':
 
 	print('begin the processing of',args.input.split('/')[-1])
 	parallel_process_negative(args.input,args.restrict_file,args.n_processes_0,args.n_processes_1,args.n_processes_2,half=args.half)
-	print('end the processing of',args.input.split('/')[-1])
+	print('end the processing of',args.input.split('/')[-1])	
