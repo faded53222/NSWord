@@ -1,0 +1,2 @@
+SGNex_Hct116_directRNA_replicate4_run3.eventalign__Hct116_ENST	1
+SGNex_Hct116_directRNA_replicate4_run3.eventalign__Hct116_ENST_neg	0
