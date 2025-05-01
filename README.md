@@ -88,11 +88,13 @@ The processing results include an ``.index`` index file and a ``.json`` data fil
 
 Next: 
 
-- Re-run the same code blocks, replacing ``SGNex_Hct116_directRNA_replicate3_run4 `` with ``SGNex_Hct116_directRNA_replicate3_run1 ``, ``SGNex_Hct116_directRNA_replicate4_run3 `` (``SGNex_HepG2_directRNA_replicate1_run3`` for cross cell line predictive performance validation).
+- Re-run the same code blocks, replacing ``SGNex_Hct116_directRNA_replicate3_run4`` with ``SGNex_Hct116_directRNA_replicate3_run1``, ``SGNex_Hct116_directRNA_replicate4_run3`` (``SGNex_HepG2_directRNA_replicate1_run3`` for cross cell line predictive performance validation).
     
 - Store all outputs in the ``edata/Dataset/m6A`` directory.
 
 These files constitute the dataset used by the models in demonstration codes.
+
+File ``intersection_HepG2_Hct116_ENST.txt``, which is the intersection of m6A sites from cell lines HepG2 and Hct116, is used to select m6A sites for the HepG2 dataset (as the RMBased-derived HepG2 m6A site annotations exhibit lower reliability).
 
 As shown above, the Nanopore sequencing data and m6A modification sites analyzed in the Hct116 cell line were sourced from [SG-NEx](https://github.com/GoekeLab/sg-nex-data).
 
