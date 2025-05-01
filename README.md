@@ -88,7 +88,7 @@ The processing results include an ``.index`` index file and a ``.json`` data fil
 
 Next: 
 
-- Re-run the same code blocks, replacing ``SGNex_Hct116_directRNA_replicate3_run4 `` with ``SGNex_Hct116_directRNA_replicate3_run1 ``, ``SGNex_Hct116_directRNA_replicate4_run3 ``.
+- Re-run the same code blocks, replacing ``SGNex_Hct116_directRNA_replicate3_run4 `` with ``SGNex_Hct116_directRNA_replicate3_run1 ``, ``SGNex_Hct116_directRNA_replicate4_run3 `` (``SGNex_HepG2_directRNA_replicate1_run3`` for cross cell line predictive performance validation).
     
 - Store all outputs in the ``edata/Dataset/m6A`` directory.
 
