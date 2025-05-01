@@ -79,8 +79,8 @@ Example:
 ```bash
 python make_index.py --input SGNex_Hct116_directRNA_replicate3_run4.eventalign
 python process.py -i SGNex_Hct116_directRNA_replicate3_run4.eventalign --restrict_file Hct116_ENST
-python process_neg_appoarch1.py -i SGNex_Hct116_directRNA_replicate3_run4.eventalign -r Hct116_ENST
-python process_neg_appoarch2.py -i SGNex_Hct116_directRNA_replicate3_run4.eventalign -r others_reduced_by_Hct116_ENST
+python process_neg_approach1.py -i SGNex_Hct116_directRNA_replicate3_run4.eventalign -r Hct116_ENST
+python process_neg_approach2.py -i SGNex_Hct116_directRNA_replicate3_run4.eventalign -r others_reduced_by_Hct116_ENST
 ```
 The processing results include an ``.index`` index file and a ``.json`` data file.
 
