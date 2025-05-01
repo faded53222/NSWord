@@ -222,7 +222,7 @@ def receive_neg_main(recv_num,file,restrict_file_name,needed_dict,r_child_conn,p
 				sleep(0.01)
 	r_child_conn.send(needed_dict)
 
-def parallel_process_negative(file,restrict_file_name,n_processes_0,n_processes_1,n_processes_2,half=False):
+def parallel_process_negative(file,restrict_file_name,n_processes_0,n_processes_1,n_processes_2,half):
 	lock_0=dict()
 	for lock_type in ['read','pipe_0','pipe_1','pipe_2']:
 		lock_0[lock_type]=multiprocessing.Lock()
@@ -258,7 +258,7 @@ def parallel_process_negative(file,restrict_file_name,n_processes_0,n_processes_
 			if gene not in avoid_dict:
 				avoid_dict[gene]=[]
 			avoid_dict[gene].append(int(pos))
-	if half:
+	if half>0:
 		for key in needed_dict:
 			needed_dict[key]=int((needed_dict[key]+1)/2)
 	print('now need: ',needed_dict)
@@ -315,8 +315,7 @@ if __name__ == '__main__':
 	parser=argparse.ArgumentParser(description="Get desired information of the same motifs of input file from nanopolish events, half the number of positive samples for each motif")
 	parser.add_argument('-i','--input',required=True,help="Input file path")
 	parser.add_argument('-r','--restrict_file',required=True,help="ENST motifs to get from the input file")
-	parser.add_argument('-ha','--half',default=True,type=int,help="Whether only getting negative samples only half of the number of positive samples for each kind of motif")
-
+	parser.add_argument('-ha','--half',default=1,type=int,help="Whether only getting negative samples only half of the number of positive samples for each kind of motif, set this parameter negative if you want to get the same number of negative sites to positive by this approach")
 
 	parser.add_argument('-n0','--n_processes_0',default=3,type=int,help="The number of processes for processing task queue 0")
 	parser.add_argument('-n1','--n_processes_1',default=6,type=int,help="The number of processes for processing task queue 1")
