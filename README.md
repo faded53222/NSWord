@@ -88,6 +88,10 @@ python process_neg_approach2.py -i SGNex_Hct116_directRNA_replicate3_run4.eventa
 ```
 The processing results include an ``.index`` index file and a ``.json`` data file.
 
+Files ``edata/Dataset/m6A/final_data_example.index`` and ``edata/Dataset/m6A/final_data_example.json`` demonstrate the expected post-processing results.
+
+---
+
 - Execute the commands provided in the code blocks above would generate the final processed files for ``SGNex_Hct116_directRNA_replicate3_run4``.
 
 Next: 
