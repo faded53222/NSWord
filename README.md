@@ -104,8 +104,6 @@ These files constitute the dataset used by the models in demonstration codes.
 
 ---
 
-File ``intersection_HepG2_Hct116_ENST.txt``, which is the intersection of m6A sites from cell lines HepG2 and Hct116, is used to select m6A sites for the HepG2 dataset (as the RMBased-derived HepG2 m6A site annotations exhibit lower reliability).
-
 As shown above, the Nanopore sequencing data and m6A modification sites analyzed in the Hct116 cell line were sourced from [SG-NEx](https://github.com/GoekeLab/sg-nex-data).
 
 ## Usage
