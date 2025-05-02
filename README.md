@@ -92,7 +92,7 @@ Files ``edata/Dataset/m6A/final_data_example.index`` and ``edata/Dataset/m6A/fin
 
 ---
 
-- Execute the commands provided in the code blocks above would generate the final processed files for ``SGNex_Hct116_directRNA_replicate3_run4``.
+- Execute the commands provided in the example code blocks above would generate the final processed files for ``SGNex_Hct116_directRNA_replicate3_run4``.
 
 Next: 
 
