@@ -3,23 +3,26 @@ import torch.nn as nn
 import numpy as np
 import torch.nn.functional as F
 from shap.explainers._explainer import Explainer
-class NSWord_DeepEXP_sites(Explainer):
+class m6Anet_DeepEXP_reads(Explainer):
 	def __init__(self,model,data):
-		nano_sum=sum(d['nano_feature'] for d in data)
-		nano_mean=nano_sum/len(data)
-		
-		nano_reads_mean=nano_mean.mean(dim=0,keepdim=True)
-		nano_reads_mean=nano_reads_mean.expand(nano_mean.shape[0],-1,-1)
-		self.reads_mean={}
-		self.reads_mean['nano_feature']=nano_reads_mean
+		X_sum=sum(d['X'] for d in data)
+		X_mean=X_sum/len(data)
 
+		X_reads_mean=X_mean.mean(dim=0,keepdim=True)
+		X_reads_mean=X_reads_mean.expand(X_mean.shape[0],-1)
+		self.reads_mean={}
+		self.reads_mean['X']=X_reads_mean
+		
 		self.model=model.eval()
 		with torch.no_grad():
 			outputs=[]
 			for sample in data:
-				outputs.append(model(sample['seq_feature'],sample['nano_feature'],sample['seq_mask'],sample['nano_mask']))
+				c_sample=sample.copy()
+				c_sample['X']=c_sample['X'].unsqueeze(0)
+				c_sample['kmer']=c_sample['kmer'].unsqueeze(0)
+				outputs.append(model(c_sample))
 			outputs=torch.stack(outputs)
-			self.num_outputs=1
+			self.num_outputs=1#1==outputs.shape[-1]
 			self.device=outputs.device
 			self.expected_value=torch.mean(outputs,dim=0).cpu().numpy()
 
@@ -50,19 +53,19 @@ class NSWord_DeepEXP_sites(Explainer):
 
 	def gradient(self,out_idx,x):
 		self.model.zero_grad()
-		grads={}
-		use_keys=['nano_feature']
+		use_keys=['X']
 		for key in x.keys():
 			if key not in use_keys:
 				continue
 			x[key].requires_grad_()
 						
-		outputs=self.model(x['seq_feature'],x['nano_feature'],x['seq_mask'],x['nano_mask'])
+		outputs=self.model(x)
 		if self.num_outputs==1:
 			selected=[val for val in outputs]
 		else:
 			selected=[val for val in outputs[:,out_idx]]
-		
+
+		grads={}
 		gkey_count=0
 		for key in x.keys():
 			if key not in use_keys:
@@ -84,28 +87,24 @@ class NSWord_DeepEXP_sites(Explainer):
 		for i in range(self.num_outputs):
 			phis=[]
 			for index,x in enumerate(X):
-				sites_num=x['nano_feature'].shape[-2]
-				t_phis=torch.empty(sites_num).to(self.device)
-				for j in range(sites_num):
-					tiled_X={}
-					tiled_X['nano_feature']=x['nano_feature'][:,j:j+1,:].repeat(1,self.reads_mean['nano_feature'].shape[-2],1)
-					tiled_X['nano_mask']=x['nano_mask'][:,j:j+1].repeat(1,x['nano_mask'].shape[-1])
-					tiled_X['seq_feature']=x['seq_feature']
-					tiled_X['seq_mask']=x['seq_mask']
-
+				reads_num=x['X'].shape[-2]
+				t_phis=torch.empty(reads_num).to(self.device)
+				for j in range(reads_num):
+					tiled_X={}					
+					tiled_X['X']=x['X'][j:j+1,:].repeat(self.reads_mean['X'].shape[-2],1)
+					tiled_X['kmer']=x['kmer'][j:j+1,:].repeat(x['kmer'].shape[-2],1)
+					
 					joint_X={}
-					joint_X['nano_feature']=torch.cat((tiled_X['nano_feature'].unsqueeze(0),self.reads_mean['nano_feature'].unsqueeze(0)),dim=0)
-					joint_X['nano_mask']=torch.cat((tiled_X['nano_mask'].unsqueeze(0),x['nano_mask'].unsqueeze(0)),dim=0)
-					joint_X['seq_feature']=torch.cat((tiled_X['seq_feature'].unsqueeze(0),x['seq_feature'].unsqueeze(0)),dim=0)
-					joint_X['seq_mask']=torch.cat((tiled_X['seq_mask'].unsqueeze(0),x['seq_mask'].unsqueeze(0)),dim=0)
+					joint_X['X']=torch.cat((tiled_X['X'].unsqueeze(0),self.reads_mean['X'].unsqueeze(0)),dim=0)
+					joint_X['kmer']=torch.cat((tiled_X['kmer'].unsqueeze(0),x['kmer'].unsqueeze(0)),dim=0)
 
 					sample_phis=self.gradient(i,joint_X)
 					t_sum=0
 					for key in sample_phis.keys():
-						if key in ['nano_feature']:
+						if key in ['X']:
 							s_phis=torch.from_numpy(sample_phis[key][1]).to(self.device)
-							dif=x[key][:,j:j+1]-self.reads_mean[key]
-							t_sum+=(s_phis*dif).mean(0).mean(-1).mean(-1)
+							dif=x[key][j:j+1]-self.reads_mean[key]
+							t_sum+=(s_phis*dif).mean(0).mean(-1)
 					t_phis[j]=t_sum
 				t_phis=t_phis.cpu().detach().numpy()
 				phis.append(t_phis)
@@ -114,6 +113,75 @@ class NSWord_DeepEXP_sites(Explainer):
 			handle.remove()
 		self.remove_attributes(self.model)
 		return output_phis
+
+	def interaction_gradient(self,output_idx,read_idx,x):
+		self.model.zero_grad()
+		use_keys=['X']
+		for key in x.keys():
+			if key not in use_keys:
+				continue
+			x[key].requires_grad_()
+		output=self.model(x)
+
+		grad_i=torch.autograd.grad(
+			outputs=output,
+			inputs=x['X'],
+            grad_outputs=torch.ones_like(output),
+			create_graph=True,
+			retain_graph=True
+		)[0]
+
+		grad_i=grad_i.mean(dim=-1)
+
+		batch_size,num_reads=grad_i.shape
+		
+		j=read_idx
+		grad_i_j=grad_i[:,j].sum()
+		grad_ij_j=torch.autograd.grad(
+			outputs=grad_i_j,
+			inputs=x['X'],
+			retain_graph=True
+		)[0]
+
+		grad_ij_j=grad_ij_j.mean(dim=-1)
+
+		with torch.no_grad():
+			del grad_i, grad_i_j
+		torch.cuda.empty_cache()
+
+		return grad_ij_j
+
+	def gradient_interaction_values(self,X):
+		handles=self.add_handles(self.model,add_interim_values,deeplift_grad)
+		output_interactions=[]
+		for output_idx in range(self.num_outputs):
+			per_output_interactions=[]
+			for index,x in enumerate(X):
+				reads_interactions=[]
+				reads_num=x['X'].shape[-2]
+				for i in range(reads_num):
+					tiled_X={
+						'X': x['X'][i:i+1,:].repeat(self.reads_mean['X'].shape[-2],1),
+						'kmer': x['kmer'][i:i+1,:].repeat(x['kmer'].shape[-2],1)
+					}
+					joint_X={
+						'X': torch.cat((tiled_X['X'].unsqueeze(0),self.reads_mean['X'].unsqueeze(0)),dim=0),
+						'kmer': torch.cat((tiled_X['kmer'].unsqueeze(0),x['kmer'].unsqueeze(0)),dim=0)
+					}
+					interaction_grads=self.interaction_gradient(output_idx,i,joint_X)
+					s_phis=interaction_grads[1].to(self.device)
+					dif=x['X'][i:i+1]-self.reads_mean['X']
+					dif=dif.mean(dim=-1)
+					reads_interaction=s_phis*dif
+					reads_interaction=reads_interaction.cpu().detach().numpy()
+					reads_interactions.append(reads_interaction)
+				per_output_interactions.append(reads_interactions)
+			output_interactions.append(per_output_interactions)
+
+		for handle in handles:
+			handle.remove()
+		self.remove_attributes(self.model)
+		return np.array(output_interactions)
 
 def deeplift_grad(module,grad_input,grad_output):
 	module_type=module.__class__.__name__
