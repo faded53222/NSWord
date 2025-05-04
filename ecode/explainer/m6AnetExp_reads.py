@@ -121,12 +121,12 @@ class m6Anet_DeepEXP_reads(Explainer):
 			if key not in use_keys:
 				continue
 			x[key].requires_grad_()
-		output=self.model(x)
+		outputs=self.model(x)
 
 		grad_i=torch.autograd.grad(
-			outputs=output,
+			outputs=outputs,
 			inputs=x['X'],
-            grad_outputs=torch.ones_like(output),
+            grad_outputs=torch.ones_like(outputs),
 			create_graph=True,
 			retain_graph=True
 		)[0]

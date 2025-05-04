@@ -115,6 +115,81 @@ class NSWord_DeepEXP_reads(Explainer):
 		self.remove_attributes(self.model)
 		return output_phis
 
+
+	def interaction_gradient(self,output_idx,read_idx,x):
+		self.model.zero_grad()
+		use_keys=['nano_feature']
+		for key in x.keys():
+			if key not in use_keys:
+				continue
+			x[key].requires_grad_()
+		outputs=self.model(x['seq_feature'],x['nano_feature'],x['seq_mask'],x['nano_mask'])
+
+		grad_i=torch.autograd.grad(
+			outputs=outputs,
+			inputs=x['nano_feature'],
+            grad_outputs=torch.ones_like(outputs),
+			create_graph=True,
+			retain_graph=True
+		)[0]
+		
+		grad_i=grad_i.mean(dim=-1).mean(dim=-1)
+
+		batch_size,num_reads=grad_i.shape
+		
+		j=read_idx
+		grad_i_j=grad_i[:,j].sum()
+		grad_ij_j=torch.autograd.grad(
+			outputs=grad_i_j,
+			inputs=x['nano_feature'],
+			retain_graph=True
+		)[0]
+
+		grad_ij_j=grad_ij_j.mean(dim=-1).mean(dim=-1)
+
+		with torch.no_grad():
+			del grad_i, grad_i_j
+		torch.cuda.empty_cache()
+
+		return grad_ij_j
+
+	def gradient_interaction_values(self,X):
+		handles=self.add_handles(self.model,add_interim_values,deeplift_grad)
+		output_interactions=[]
+		for output_idx in range(self.num_outputs):
+			per_output_interactions=[]
+			for index,x in enumerate(X):
+				reads_interactions=[]
+				reads_num=x['nano_feature'].shape[-3]
+				for i in range(reads_num):
+					tiled_X={
+						'nano_feature': x['nano_feature'][i:i+1,:].repeat(self.reads_mean['nano_feature'].shape[-3],1,1),
+						'nano_mask': x['nano_mask'][i:i+1,:].repeat(x['nano_mask'].shape[-2],1),
+						'seq_feature': x['seq_feature'],
+						'seq_mask': x['seq_mask']
+					}
+					joint_X={
+						'nano_feature': torch.cat((tiled_X['nano_feature'].unsqueeze(0),self.reads_mean['nano_feature'].unsqueeze(0)),dim=0),
+						'nano_mask': torch.cat((tiled_X['nano_mask'].unsqueeze(0),x['nano_mask'].unsqueeze(0)),dim=0),
+						'seq_feature': torch.cat((tiled_X['seq_feature'].unsqueeze(0),x['seq_feature'].unsqueeze(0)),dim=0),
+						'seq_mask': torch.cat((tiled_X['seq_mask'].unsqueeze(0),x['seq_mask'].unsqueeze(0)),dim=0)
+					}
+					interaction_grads=self.interaction_gradient(output_idx,i,joint_X)
+					s_phis=interaction_grads[1].to(self.device)
+					dif=x['nano_feature'][i:i+1]-self.reads_mean['nano_feature']
+					dif=dif.mean(dim=-1).mean(dim=-1)
+					reads_interaction=s_phis*dif
+					reads_interaction=reads_interaction.cpu().detach().numpy()
+					reads_interactions.append(reads_interaction)
+				per_output_interactions.append(reads_interactions)
+			output_interactions.append(per_output_interactions)
+
+		for handle in handles:
+			handle.remove()
+		self.remove_attributes(self.model)
+		return np.array(output_interactions)
+
+
 def deeplift_grad(module,grad_input,grad_output):
 	module_type=module.__class__.__name__
 	if module_type in op_handler:
