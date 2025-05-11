@@ -102,7 +102,7 @@ Next:
 
 These files constitute the dataset used by the models in demonstration codes.
 
-The exact processed data used for model evaluation in the notebooks can be downloaded from [](https://drive.google.com/drive/folders/19L5-yIUrHiIotUJoltECkWRWmc21THFm?usp=sharing)
+The exact processed data used for model evaluation in the notebooks can be downloaded [here](https://drive.google.com/drive/folders/19L5-yIUrHiIotUJoltECkWRWmc21THFm?usp=sharing)
 
 ---
 
