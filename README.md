@@ -102,6 +102,8 @@ Next:
 
 These files constitute the dataset used by the models in demonstration codes.
 
+The exact processed data used for model evaluation in the notebooks can be downloaded from [](https://drive.google.com/drive/folders/19L5-yIUrHiIotUJoltECkWRWmc21THFm?usp=sharing)
+
 ---
 
 As shown above, the Nanopore sequencing data and m6A modification sites analyzed in the Hct116 cell line were sourced from [SG-NEx](https://github.com/GoekeLab/sg-nex-data).
