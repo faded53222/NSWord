@@ -134,7 +134,9 @@ This section shows the evaluation of the model using RNA004 data. Given the smal
 
 The structure of the model need not to be modified for using RNA004 data, because models like NSWord are fundamentally event-based rather than certain-version-signal-data-dependent: as long as future data are still suitable be converted into eventaligned events, the model's performance would remain largely consistent.
 
-Detailed data fetching and testing:
+Learn more about [pod5 data format](https://github.com/nanoporetech/pod5-file-format) and [f5c](https://github.com/hasindu2008/f5c/releases/tag/v1.3) used to convert raw signals to events.
+
+Detailed data fetching:
 ```bash
 cd NSWord/RNA004
 
