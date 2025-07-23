@@ -69,6 +69,7 @@ The restriction files, which contain the sites to be extracted from the events r
 
 Example of getting the m6A sites restriction file of the Hct116 cell line:
 ```bash
+cd ecode/data_process
 wget http://sg-nex-data.s3.amazonaws.com/data/annotations/m6ACE_seq_reference_table/Hct116_m6ACEsites.txt -O Hct116.txt
 pyensembl install --release 110 --species homo_sapiens
 python ENSG_to_ENST.py -i Hct116
@@ -76,17 +77,18 @@ python ENSG_to_ENST.py -i Hct116
 
 ---
 
-After getting nanopolish eventalign results, we need to preprocess the segmented raw signal file using ``make_index.py``, ``process.py``, ``process_neg_approach1.py`` and ``process_neg_approach2.py``.
+After getting nanopolish eventalign results, we need to process the segmented raw signal file using ``make_index.py``, ``process.py``, ``process_neg_approach1.py`` and ``process_neg_approach2.py``.
 ``make_index.py`` builds index for faster running. ``process.py`` gets positive samples for the dataset. ``process_neg_approach1.py`` gets half of the negative samples with the same 5-mer motifs as positive ones. And ``process_neg_approach2.py`` gets the other half of the negative samples by selecting sites that are m6A modifiable in other cell-lines but not in Hct116. Run the commands with '-help' for parameter details.
 
 Example:
 ```bash
+cd ecode/data_process
 python make_index.py --input SGNex_Hct116_directRNA_replicate3_run4.eventalign
 python process.py -i SGNex_Hct116_directRNA_replicate3_run4.eventalign --restrict_file Hct116_ENST
 python process_neg_approach1.py -i SGNex_Hct116_directRNA_replicate3_run4.eventalign -r Hct116_ENST
 python process_neg_approach2.py -i SGNex_Hct116_directRNA_replicate3_run4.eventalign -r others_reduced_by_Hct116_ENST
 ```
-The processing results include an ``.index`` index file and a ``.json`` data file.
+The processed results include an ``.index`` index file and a ``.json`` data file.
 
 Files ``edata/Dataset/m6A/final_data_example.index`` and ``edata/Dataset/m6A/final_data_example.json`` demonstrate the expected post-processing results.
 
@@ -134,12 +136,11 @@ This section shows the evaluation of the model using RNA004 data. Given the smal
 
 The structure of the model need not to be modified for using RNA004 data, because models like NSWord are fundamentally event-based rather than certain-version-signal-data-dependent: as long as future data are still suitable be converted into eventaligned events, the model's performance would remain largely consistent.
 
-Learn more about [pod5 data format](https://github.com/nanoporetech/pod5-file-format) and [f5c](https://github.com/hasindu2008/f5c/releases/tag/v1.3) used to convert raw signals to events.
+Learn more about [pod5 data format](https://github.com/nanoporetech/pod5-file-format), and [f5c](https://github.com/hasindu2008/f5c/releases/tag/v1.3) used to convert raw signals to events.
 
 Detailed data fetching:
 ```bash
 cd NSWord/RNA004
-
 wget https://42basepairs.com/download/s3/ont-open-data/rna-modbase-validation_2025.03/references/sampled_context_strands.fa
 wget https://42basepairs.com/download/s3/ont-open-data/rna-modbase-validation_2025.03/basecalls/m6A_rep1.bam
 wget https://42basepairs.com/download/s3/ont-open-data/rna-modbase-validation_2025.03/basecalls/control_rep1.bam
@@ -167,5 +168,13 @@ wget https://raw.githubusercontent.com/hasindu2008/f5c/v1.3/test/rna004-models/r
 /f5c-v1.5/f5c_x86_64_linux eventalign --rna -b m6A_rep1-ref.sorted.bam -r m6A_rep1.fastq -g sampled_context_strands.fa -o m6A_rep1.eventalign.txt --kmer-model rna004.nucleotide.5mer.model 
 /f5c-v1.5/f5c_x86_64_linux index -d control_rep1_fast5/ control_rep1.fastq
 /f5c-v1.5/f5c_x86_64_linux eventalign --rna -b control_rep1-ref.sorted.bam -r control_rep1.fastq -g sampled_context_strands.fa -o control_rep1.eventalign.txt --kmer-model rna004.nucleotide.5mer.model 
+```
+
+The data processing requirements for obtaining positive and negative samples remain unchanged. However, in this dataset, positive samples are derived from specific runs with modified RNAs, while negative samples are derived from specific runs with unmodified RNAs.
+
+Detailed data processing:
+```bash
+cd NSWord/RNA004
+
 
 ```
