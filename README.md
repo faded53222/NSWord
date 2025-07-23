@@ -39,7 +39,7 @@ See [Nanopolish](https://github.com/jts/nanopolish) for more information.
 
 Example:
 ```bash
-cd ecode/data_process
+cd NSWord/ecode/data_process
 wget http://sg-nex-data.s3.amazonaws.com/data/annotations/transcriptome_fasta/Homo_sapiens.GRCh38.cdna.ncrna.fa
 wget http://sg-nex-data.s3.amazonaws.com/data/annotations/transcriptome_fasta/Homo_sapiens.GRCh38.cdna.ncrna.fa.fai
 
@@ -69,7 +69,7 @@ The restriction files, which contain the sites to be extracted from the events r
 
 Example of getting the m6A sites restriction file of the Hct116 cell line:
 ```bash
-cd ecode/data_process
+cd NSWord/ecode/data_process
 wget http://sg-nex-data.s3.amazonaws.com/data/annotations/m6ACE_seq_reference_table/Hct116_m6ACEsites.txt -O Hct116.txt
 pyensembl install --release 110 --species homo_sapiens
 python ENSG_to_ENST.py -i Hct116
@@ -82,7 +82,7 @@ After getting nanopolish eventalign results, we need to process the segmented ra
 
 Example:
 ```bash
-cd ecode/data_process
+cd NSWord/ecode/data_process
 python make_index.py --input SGNex_Hct116_directRNA_replicate3_run4.eventalign
 python process.py -i SGNex_Hct116_directRNA_replicate3_run4.eventalign --restrict_file Hct116_ENST
 python process_neg_approach1.py -i SGNex_Hct116_directRNA_replicate3_run4.eventalign -r Hct116_ENST
