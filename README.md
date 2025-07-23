@@ -127,3 +127,43 @@ python create_dataset.py --path m6A --use_file_name use_files --save_name m6A_NS
 python train.py --load_dataset_name m6A_NSWord --epochs 150 --learning_rate 0.001 --seq_reduce 16 -- read_reduce 0
 python test.py --load_dataset_name m6A_NSWord --load_model_name NSWord_222000_50_50reads_9sites --seq_reduce 16 -- read_reduce 0
 ```
+
+## Test or Sanity Check with RNA004 data
+
+This section shows the evaluation of the model using RNA004 data. Given the small size of the [test data](https://epi2me.nanoporetech.com/rna-mod-validation-data/), it can also serve as a sanity check.
+
+The structure of the model need not to be modified for using RNA004 data, because models like NSWord are fundamentally event-based rather than certain-version-signal-data-dependent: as long as future data are still suitable be converted into eventaligned events, the model's performance would remain largely consistent.
+
+Detailed data fetching and testing:
+```bash
+cd NSWord/RNA004
+
+wget https://42basepairs.com/download/s3/ont-open-data/rna-modbase-validation_2025.03/references/sampled_context_strands.fa
+wget https://42basepairs.com/download/s3/ont-open-data/rna-modbase-validation_2025.03/basecalls/m6A_rep1.bam
+wget https://42basepairs.com/download/s3/ont-open-data/rna-modbase-validation_2025.03/basecalls/control_rep1.bam
+wget https://42basepairs.com/download/s3/ont-open-data/rna-modbase-validation_2025.03/subset/m6A_rep1.pod5
+wget https://42basepairs.com/download/s3/ont-open-data/rna-modbase-validation_2025.03/subset/control_rep1.pod5
+
+pod5 convert to_fast5 control_rep1.pod5 --output control_rep1_fast5/
+pod5 convert to_fast5 m6A_rep1.pod5 --output m6A_rep1_fast5/
+samtools fastq -0 control_rep1.fastq control_rep1.bam
+samtools fastq -0 m6A_rep1.fastq m6A_rep1.bam
+
+minimap2 -ax map-ont -t 8 sampled_context_strands.fa m6A_rep1.fastq | samtools sort -o m6A_rep1-ref.sorted.bam -T m6A_rep1.tmp
+samtools index m6A_rep1-ref.sorted.bam
+minimap2 -ax map-ont -t 8 sampled_context_strands.fa control_rep1.fastq | samtools sort -o control_rep1-ref.sorted.bam -T control_rep1.tmp
+samtools index control_rep1-ref.sorted.bam
+
+VERSION=v1.5
+wget "https://github.com/hasindu2008/f5c/releases/download/$VERSION/f5c-$VERSION-binaries.tar.gz" && tar xvf f5c-$VERSION-binaries.tar.gz && cd f5c-$VERSION/
+cd f5c-v1.5/scripts
+export HDF5_PLUGIN_PATH=$HOME/.local/hdf5/lib/plugin
+
+wget https://raw.githubusercontent.com/hasindu2008/f5c/v1.3/test/rna004-models/rna004.nucleotide.5mer.model
+
+/f5c-v1.5/f5c_x86_64_linux index -d m6A_rep1_fast5/ m6A_rep1.fastq
+/f5c-v1.5/f5c_x86_64_linux eventalign --rna -b m6A_rep1-ref.sorted.bam -r m6A_rep1.fastq -g sampled_context_strands.fa -o m6A_rep1.eventalign.txt --kmer-model rna004.nucleotide.5mer.model 
+/f5c-v1.5/f5c_x86_64_linux index -d control_rep1_fast5/ control_rep1.fastq
+/f5c-v1.5/f5c_x86_64_linux eventalign --rna -b control_rep1-ref.sorted.bam -r control_rep1.fastq -g sampled_context_strands.fa -o control_rep1.eventalign.txt --kmer-model rna004.nucleotide.5mer.model 
+
+```
