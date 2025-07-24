@@ -175,6 +175,11 @@ The data processing requirements for obtaining positive and negative samples rem
 Detailed data processing:
 ```bash
 cd NSWord/RNA004
+python get_DRACH_sites_from_fasta.py -i sampled_context_strands.fa -o DRACH_sites.txt
+
+python make_index.py --i m6A_rep1.eventalign
+python make_index.py --i control_rep1.eventalign
+
 
 
 ```
