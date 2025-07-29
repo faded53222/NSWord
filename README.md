@@ -165,9 +165,9 @@ export HDF5_PLUGIN_PATH=$HOME/.local/hdf5/lib/plugin
 wget https://raw.githubusercontent.com/hasindu2008/f5c/v1.3/test/rna004-models/rna004.nucleotide.5mer.model
 
 /f5c-v1.5/f5c_x86_64_linux index -d m6A_rep1_fast5/ m6A_rep1.fastq
-/f5c-v1.5/f5c_x86_64_linux eventalign --rna -b m6A_rep1-ref.sorted.bam -r m6A_rep1.fastq -g sampled_context_strands.fa -o m6A_rep1.eventalign.txt --kmer-model rna004.nucleotide.5mer.model 
+/f5c-v1.5/f5c_x86_64_linux eventalign --signal-index --rna -b m6A_rep1-ref.sorted.bam -r m6A_rep1.fastq -g sampled_context_strands.fa -o m6A_rep1.eventalign.txt --kmer-model rna004.nucleotide.5mer.model 
 /f5c-v1.5/f5c_x86_64_linux index -d control_rep1_fast5/ control_rep1.fastq
-/f5c-v1.5/f5c_x86_64_linux eventalign --rna -b control_rep1-ref.sorted.bam -r control_rep1.fastq -g sampled_context_strands.fa -o control_rep1.eventalign.txt --kmer-model rna004.nucleotide.5mer.model 
+/f5c-v1.5/f5c_x86_64_linux eventalign --signal-index --rna -b control_rep1-ref.sorted.bam -r control_rep1.fastq -g sampled_context_strands.fa -o control_rep1.eventalign.txt --kmer-model rna004.nucleotide.5mer.model 
 ```
 
 The data processing requirements for obtaining positive and negative samples remain unchanged. However, in this dataset, positive samples are derived from specific runs with modified RNAs, while negative samples are derived from specific runs with unmodified RNAs.
