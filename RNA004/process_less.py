@@ -94,8 +94,7 @@ def search_and_partition(file,o_file,gene,gene_readindex_rows,search_info,num_of
 	
 	for key in partitions_dic:
 		repeats=partitions_dic[key]
-		with open(o_file+'.json','a') as fw_json, open(o_file+'.index','a') as fw_json_index:
-			file_pos_start=fw_json.tell()
+		with open(o_file+'.json','ab') as fw_json, open(o_file+'.index','a') as fw_json_index:
 			combine_seq=list(repeats[0][0])
 			for i in range(len(combine_seq)):
 				if combine_seq[i]=='N':
@@ -107,9 +106,10 @@ def search_and_partition(file,o_file,gene,gene_readindex_rows,search_info,num_of
 			
 			into_k_bags=len(repeats)//num_of_reads_per_bag
 			for bag_number in range(0,into_k_bags):
-				fw_json.write(json.dumps(combine_seq)+'\n')
+				file_pos_start=fw_json.tell()
+				fw_json.write(json.dumps(combine_seq).encode('utf-8')+b'\n')
 				for repeat in repeats[bag_number*num_of_reads_per_bag:(bag_number+1)*num_of_reads_per_bag]:
-					fw_json.write(json.dumps(repeat[1])+'\n')
+					fw_json.write(json.dumps(repeat[1]).encode('utf-8')+b'\n')
 				file_pos_end=fw_json.tell()
 				fw_json_index.write('%s_%s_%d\t%d\t%d\n'%(gene,key[0],key[1],file_pos_start,file_pos_end))
 
