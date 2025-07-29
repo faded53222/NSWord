@@ -211,16 +211,16 @@ def receive_neg_main(recv_num,file,restrict_file_name,needed_dict,r_child_conn,p
 						needed_dict[select_info[0]]-=1
 						if needed_dict[select_info[0]]<=0:
 							del needed_dict[select_info[0]]
-						with open(file+'__'+restrict_file_name+'_neg.json','a') as fw_json:
+						with open(file+'__'+restrict_file_name+'_neg.json','ab') as fw_json:
 							with open(file+'__'+restrict_file_name+'_neg.index','a') as fw_json_index:
 								file_pos_start=fw_json.tell()
-								fw_json.write(json.dumps(partition_data[0])+'\n')
+								fw_json.write(json.dumps(partition_data[0]).encode('utf-8')+b'\n')
 								repeats=partition_data[1]
 								for repeat in repeats:
-									fw_json.write(json.dumps(repeat)+'\n')
+									fw_json.write(json.dumps(repeat).encode('utf-8')+b'\n')
 								for i in range(REPEAT_SIZE_MAX-len(repeats)):
 									rand_select=random.randint(0,len(repeats)-1)
-									fw_json.write(json.dumps(repeats[rand_select])+'\n')
+									fw_json.write(json.dumps(repeats[rand_select]).encode('utf-8')+b'\n')
 								file_pos_end=fw_json.tell()
 								fw_json_index.write('%s_%s_%d\t%d\t%d\n'%(gene,select_info[0],select_info[1],file_pos_start,file_pos_end))
 				break

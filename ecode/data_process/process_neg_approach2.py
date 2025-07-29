@@ -133,7 +133,7 @@ def receive_partition(recv_num,o_file,gene,all_select_info,parent_conn,locks):
 		if len(repeats)>REPEAT_SIZE_MIN:
 			if len(repeats)>REPEAT_SIZE_MAX:
 				repeats=repeats[:REPEAT_SIZE_MAX]
-			with locks['write'],open(o_file+'.json','a') as fw_json:
+			with locks['write'],open(o_file+'.json','ab') as fw_json:
 				with open(o_file+'.index','a') as fw_json_index:
 					file_pos_start=fw_json.tell()
 					combine_seq=list(repeats[0][0])
@@ -144,12 +144,12 @@ def receive_partition(recv_num,o_file,gene,all_select_info,parent_conn,locks):
 									combine_seq[i]=repeats[j][0][i]
 									break
 					combine_seq=''.join(combine_seq)
-					fw_json.write(json.dumps(combine_seq)+'\n')
+					fw_json.write(json.dumps(combine_seq).encode('utf-8')+b'\n')
 					for repeat in repeats:
-						fw_json.write(json.dumps(repeat[1])+'\n')
+						fw_json.write(json.dumps(repeat[1]).encode('utf-8')+b'\n')
 					for i in range(REPEAT_SIZE_MAX-len(repeats)):
 						rand_select=random.randint(0,len(repeats)-1)
-						fw_json.write(json.dumps(repeats[rand_select][1])+'\n')
+						fw_json.write(json.dumps(repeats[rand_select][1]).encode('utf-8')+b'\n')
 					file_pos_end=fw_json.tell()
 					fw_json_index.write('%s_%s_%d\t%d\t%d\n'%(gene,key[0],key[1],file_pos_start,file_pos_end))
 
