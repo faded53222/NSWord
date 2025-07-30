@@ -65,7 +65,7 @@ All data processing steps and python files from this point onward are also conta
 
 ---
 
-The restriction files, which contain the sites to be extracted from the events results, are already included in this repository and can be obtained in ``process_sites.ipynb``.
+The restriction files, which contain the sites to be extracted from the events results, are already included in this repository and can be obtained in ``ecode/data_process/process_sites.ipynb``.
 
 Example of getting the m6A sites restriction file of the Hct116 cell line:
 ```bash
@@ -132,7 +132,7 @@ python test.py --load_dataset_name m6A_NSWord --load_model_name NSWord_222000_50
 
 ## Test or Sanity Check with RNA004 data
 
-This section shows the evaluation of the model using RNA004 data. Given the small size of the [test data](https://epi2me.nanoporetech.com/rna-mod-validation-data/), it can also serve as a sanity check.
+This section shows the evaluation of the model using RNA004 data. Given the small size of the [test data](https://epi2me.nanoporetech.com/rna-mod-validation-data/), it can also serve as a sanity check. For verification convenience, all intermediate files generated throughout the process are preserved in folder ``RNA004`` of the repository, available for direct download and validation.
 
 The structure of the model need not to be modified for using RNA004 data, because models like NSWord are fundamentally event-based rather than certain-version-signal-data-dependent: as long as future data are still suitable be converted into eventaligned events, the model's performance would remain largely consistent.
 
@@ -209,4 +209,4 @@ python process_less.py -i control_rep1.eventalign -r DRACH_sites --num_of_reads_
 python process_less.py -i control_rep2.eventalign -r DRACH_sites --num_of_reads_per_bag 5
 ```
 
-The testing details and results can be seen in ``RNA004_NSWord.ipynb``. The results show that, NSWord is able to discriminate signals from m6A_rep1/2.pod5 and  control_rep1/2.pod5, given the condition that they correspond to the same 6 sequences. This means the model is still effective with RNA004 data.
+The validation details and result can be seen in ``RNA004/RNA004_NSWord.ipynb``. Its ROC curve and PR curve can be seen in ``Draw_Graphs.ipynb``. The result shows that, NSWord is able to discriminate signals from m6A_rep1/2.pod5 and  control_rep1/2.pod5, given the condition that they correspond to the same 6 sequences. This means the model is effective with RNA004 data or potentially future signal modalities.
