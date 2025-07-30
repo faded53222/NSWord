@@ -1,2 +1,4 @@
 m6A_rep1.eventalign__DRACH_sites	1
+m6A_rep2.eventalign__DRACH_sites	1
 control_rep1.eventalign__DRACH_sites	0
+control_rep2.eventalign__DRACH_sites	0
