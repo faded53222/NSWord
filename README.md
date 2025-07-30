@@ -142,20 +142,35 @@ Detailed data fetching:
 ```bash
 cd NSWord/RNA004
 wget https://42basepairs.com/download/s3/ont-open-data/rna-modbase-validation_2025.03/references/sampled_context_strands.fa
+
 wget https://42basepairs.com/download/s3/ont-open-data/rna-modbase-validation_2025.03/basecalls/m6A_rep1.bam
+wget https://42basepairs.com/download/s3/ont-open-data/rna-modbase-validation_2025.03/basecalls/m6A_rep2.bam
 wget https://42basepairs.com/download/s3/ont-open-data/rna-modbase-validation_2025.03/basecalls/control_rep1.bam
+wget https://42basepairs.com/download/s3/ont-open-data/rna-modbase-validation_2025.03/basecalls/control_rep2.bam
+
 wget https://42basepairs.com/download/s3/ont-open-data/rna-modbase-validation_2025.03/subset/m6A_rep1.pod5
+wget https://42basepairs.com/download/s3/ont-open-data/rna-modbase-validation_2025.03/subset/m6A_rep2.pod5
 wget https://42basepairs.com/download/s3/ont-open-data/rna-modbase-validation_2025.03/subset/control_rep1.pod5
+wget https://42basepairs.com/download/s3/ont-open-data/rna-modbase-validation_2025.03/subset/control_rep2.pod5
 
 pod5 convert to_fast5 control_rep1.pod5 --output control_rep1_fast5/
+pod5 convert to_fast5 control_rep2.pod5 --output control_rep2_fast5/
 pod5 convert to_fast5 m6A_rep1.pod5 --output m6A_rep1_fast5/
+pod5 convert to_fast5 m6A_rep2.pod5 --output m6A_rep2_fast5/
+
 samtools fastq -0 control_rep1.fastq control_rep1.bam
+samtools fastq -0 control_rep2.fastq control_rep2.bam
 samtools fastq -0 m6A_rep1.fastq m6A_rep1.bam
+samtools fastq -0 m6A_rep2.fastq m6A_rep2.bam
 
 minimap2 -ax map-ont -t 8 sampled_context_strands.fa m6A_rep1.fastq | samtools sort -o m6A_rep1-ref.sorted.bam -T m6A_rep1.tmp
-samtools index m6A_rep1-ref.sorted.bam
+minimap2 -ax map-ont -t 8 sampled_context_strands.fa m6A_rep2.fastq | samtools sort -o m6A_rep2-ref.sorted.bam -T m6A_rep2.tmp
 minimap2 -ax map-ont -t 8 sampled_context_strands.fa control_rep1.fastq | samtools sort -o control_rep1-ref.sorted.bam -T control_rep1.tmp
+minimap2 -ax map-ont -t 8 sampled_context_strands.fa control_rep2.fastq | samtools sort -o control_rep2-ref.sorted.bam -T control_rep2.tmp
+samtools index m6A_rep1-ref.sorted.bam
+samtools index m6A_rep2-ref.sorted.bam
 samtools index control_rep1-ref.sorted.bam
+samtools index control_rep2-ref.sorted.bam
 
 VERSION=v1.5
 wget "https://github.com/hasindu2008/f5c/releases/download/$VERSION/f5c-$VERSION-binaries.tar.gz" && tar xvf f5c-$VERSION-binaries.tar.gz && cd f5c-$VERSION/
@@ -165,9 +180,15 @@ export HDF5_PLUGIN_PATH=$HOME/.local/hdf5/lib/plugin
 wget https://raw.githubusercontent.com/hasindu2008/f5c/v1.3/test/rna004-models/rna004.nucleotide.5mer.model
 
 /f5c-v1.5/f5c_x86_64_linux index -d m6A_rep1_fast5/ m6A_rep1.fastq
-/f5c-v1.5/f5c_x86_64_linux eventalign --signal-index --rna -b m6A_rep1-ref.sorted.bam -r m6A_rep1.fastq -g sampled_context_strands.fa -o m6A_rep1.eventalign.txt --kmer-model rna004.nucleotide.5mer.model 
+/f5c-v1.5/f5c_x86_64_linux index -d m6A_rep2_fast5/ m6A_rep2.fastq
 /f5c-v1.5/f5c_x86_64_linux index -d control_rep1_fast5/ control_rep1.fastq
+/f5c-v1.5/f5c_x86_64_linux index -d control_rep2_fast5/ control_rep2.fastq
+
+/f5c-v1.5/f5c_x86_64_linux eventalign --signal-index --rna -b m6A_rep1-ref.sorted.bam -r m6A_rep1.fastq -g sampled_context_strands.fa -o m6A_rep1.eventalign.txt --kmer-model rna004.nucleotide.5mer.model 
+/f5c-v1.5/f5c_x86_64_linux eventalign --signal-index --rna -b m6A_rep2-ref.sorted.bam -r m6A_rep2.fastq -g sampled_context_strands.fa -o m6A_rep2.eventalign.txt --kmer-model rna004.nucleotide.5mer.model 
 /f5c-v1.5/f5c_x86_64_linux eventalign --signal-index --rna -b control_rep1-ref.sorted.bam -r control_rep1.fastq -g sampled_context_strands.fa -o control_rep1.eventalign.txt --kmer-model rna004.nucleotide.5mer.model 
+/f5c-v1.5/f5c_x86_64_linux eventalign --signal-index --rna -b control_rep2-ref.sorted.bam -r control_rep2.fastq -g sampled_context_strands.fa -o control_rep2.eventalign.txt --kmer-model rna004.nucleotide.5mer.model 
+
 ```
 
 The data processing requirements for obtaining positive and negative samples remain unchanged. However, in this dataset, positive samples are derived from specific runs with modified RNAs, while negative samples are derived from specific runs with unmodified RNAs.
@@ -178,8 +199,14 @@ cd NSWord/RNA004
 python get_DRACH_sites_from_fasta.py -i sampled_context_strands.fa -o DRACH_sites.txt
 
 python make_index_less.py --i m6A_rep1.eventalign
+python make_index_less.py --i m6A_rep2.eventalign
 python make_index_less.py --i control_rep1.eventalign
-python process_less.py -i m6A_rep1.eventalign -r DRACH_sites
-python process_less.py -i control_rep1.eventalign -r DRACH_sites
+python make_index_less.py --i control_rep2.eventalign
 
+python process_less.py -i m6A_rep1.eventalign -r DRACH_sites --num_of_reads_per_bag 5
+python process_less.py -i m6A_rep2.eventalign -r DRACH_sites --num_of_reads_per_bag 5
+python process_less.py -i control_rep1.eventalign -r DRACH_sites --num_of_reads_per_bag 5
+python process_less.py -i control_rep2.eventalign -r DRACH_sites --num_of_reads_per_bag 5
 ```
+
+The testing details and results can be seen in ``RNA004_NSWord.ipynb``. The results show that, NSWord is able to discriminate signals from m6A_rep1/2.pod5 and  control_rep1/2.pod5, given the condition that they correspond to the same 6 sequences. This means the model is still effective with RNA004 data.
