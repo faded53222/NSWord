@@ -134,8 +134,6 @@ python test.py --load_dataset_name m6A_NSWord --load_model_name NSWord_222000_50
 
 This section shows the evaluation of the model using RNA004 data. Given the small size of the [test data](https://epi2me.nanoporetech.com/rna-mod-validation-data/), it can also serve as a sanity check. For verification convenience, all intermediate files generated throughout the process are preserved in folder ``RNA004`` of the repository, available for direct download and validation.
 
-The structure of the model need not to be modified for using RNA004 data, because models like NSWord are fundamentally event-based rather than certain-version-signal-data-dependent: as long as future data are still suitable be converted into eventaligned events, the model's performance would remain largely consistent.
-
 Learn more about [pod5 data format](https://github.com/nanoporetech/pod5-file-format), and [f5c](https://github.com/hasindu2008/f5c/releases/tag/v1.3) used to convert raw signals to events.
 
 Detailed data fetching:
