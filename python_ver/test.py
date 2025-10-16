@@ -83,7 +83,7 @@ def detailed_test(model,test_loader,device,seq_reduce=0,read_reduce=0,curve_name
 	print('AUC:{:.4f}   accuracy:{:.4f}%'.format(auc,accuracy))
 	for key in more_dict:
 		if more_dict[key][1]>0:
-			print('Precision when positive threshold at {:g} is :{:.4f}% (total:{:d})'.format(key,more_dict[key][0]/more_dict[key][1],more_dict[key][1]))
+			print('Precision when positive threshold at {:g} is :{:.4f}% (total:{:d})'.format(key,100*more_dict[key][0]/more_dict[key][1],more_dict[key][1]))
 	torch.cuda.empty_cache()
 
 
@@ -101,7 +101,7 @@ if __name__ == '__main__':
 	print('len(flattened_test_set)',len(flattened_test_set))
 	test_loader=DataLoader(flattened_test_set,batch_size=5,shuffle=True)
 
-	device=torch.device('cuda'if torch.cuda.is_available() else 'cpu')
+	device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 	model=Nano(c_s=4,c_x=3,c_emb=16,c_hidden_att=16,c_o=1,no_heads=8,blocks_lis=[2,2,2,0,0,0],
 				dropout=0.2,transition_n=2,inf=1e9,eps=1e-8,
 				clear_cache_between_blocks=False).to(device)
