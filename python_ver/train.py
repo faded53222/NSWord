@@ -84,7 +84,7 @@ if __name__ == '__main__':
 	print('len(flattened_train_set)',len(flattened_train_set))
 	print('len(flattened_val_set)',len(flattened_val_set))
 	
-	train_loader=DataLoader(flattened_train_set,batch_size=5,shuffle=True)
+	train_loader=DataLoader(flattened_train_set,batch_size=5,shuffle=True,drop_last=True)
 	val_loader=DataLoader(flattened_val_set,batch_size=5,shuffle=True)
 	
 	torch.cuda.manual_seed_all(0)
