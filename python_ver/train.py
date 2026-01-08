@@ -57,9 +57,9 @@ def train(model,train_loader,val_loader,device,optimizer,loss_func,epochs,seq_re
 			pre_y=model(seq_feature,nano_feature,seq_mask,nano_mask)
 			loss=loss_func(pre_y,data_y.float())
 			total_loss+=loss
+			optimizer.zero_grad()
 			loss.backward()
 			optimizer.step()
-			optimizer.zero_grad()
 		print('epoch {}, loss:{:.4f}'.format(epoch+1,total_loss.item()/len(train_loader)))
 		if epoch%10==9:
 			print('At epoch '+str(epoch+1),':')
